@@ -1,4 +1,4 @@
-// netlify/functions/pr-runway-chat.js
+// netlify/functions/p-r-runway-chat.js
 //
 // The brain behind the PR Runway AI Concierge on prrunway.com.
 // The page calls /.netlify/functions/pr-runway-chat and gets back { reply }.
@@ -33,7 +33,7 @@ PR RUNWAY
   Free Consultation — no obligation, a few questions, builds a custom PR package with exact pricing in under 2 minutes.
   Pricing calculator — pick services, see the total instantly, then "Get started" to buy.
 - Part of the Boss Chic Coin ecosystem. Sister platform: Trunk Show USA (trunkshowusa.com), an AI-run virtual trunk show.
-- Contact: travish@negrislebrum.com
+- Contact: ai@prrunway.com
 
 RODEO FASHION WEEK — PR Runway is its PR, and you are its point of contact
 - Rodeo Fashion Week is one program with two stages: Houston and New York. Tagline: "Where Western Heritage Meets Haute Couture." The home of Western luxury fashion.
