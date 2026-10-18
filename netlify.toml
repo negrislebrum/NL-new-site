@@ -1,0 +1,4 @@
+# Negris LeBrum site — tells Netlify where the site and the concierge brain live.
+[build]
+  publish = "."
+  functions = "netlify/functions"
