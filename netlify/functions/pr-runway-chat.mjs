@@ -189,11 +189,11 @@ ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum
 - Knitwear and NL Western: more pieces arriving soon — invite them to join the list at the bottom of any page.
 
 THE VAULT — classics from the house archive, limited quantities; once a piece is gone it stays in the archive. Send Vault shoppers to trunkshowusa.com.
-- The Elephant Ear Suit, $795: in-house corduroy brocade blazer with an oversized deep blue-green velvet collar — the elephant ear — three buttons and flap pockets, with the velvet trouser, wide and straight with a brocade side stripe. Sold as a set.
-- The Biker Set (Vegan Leather), $595: vegan leather biker jacket with a velvet yoke and stand collar, ring-pull zip and zip pockets, with a vegan leather mini skirt with patch pockets. Sold as a set.
+- Velvet & Brocade Elephant Collar Suit, $795: in-house corduroy brocade blazer with an oversized deep blue-green velvet collar — the elephant ear — three buttons and flap pockets, with the velvet trouser, wide and straight with a brocade side stripe. Sold as a set.
+- Emerald Moto Set, $595: vegan leather biker jacket with a velvet yoke and stand collar, ring-pull zip and zip pockets, with a vegan leather mini skirt with patch pockets. Sold as a set.
 - Sarah's Dress, $595: midi in in-house corduroy brocade with a deep blue-green velvet yoke and center panel, stand collar, long brocade sleeves with buttoned cuffs.
 - The Cowl-Neck Dress, $525: long-sleeve velvet cowl-neck bodice joined to a corduroy brocade mini skirt with a three-button front panel. One dress, two textures.
-- The Curtain Dress, $495 (new to the Vault): black satin, deep V neckline, ruched draped front opening to a split, stretch waist belt with the gold NL buckle. Sleeveless, back zip.
+- Noir Satin Drape Dress, $495 (new to the Vault): black satin, deep V neckline, ruched draped front opening to a split, stretch waist belt with the gold NL buckle. Sleeveless, back zip.
 - The Audrey, $475: sleeveless, double-breasted mini dress in in-house corduroy brocade with gold buttons and flap pockets.
 - The Funkadelic Dress, $245, Medium only, last one: polished printed poly/spandex stretch dress with a slight mock neck and slight bell sleeve, trimmed in orange at the cuffs and hem.
 - The Emerald Velvet Trouser, $195: high-rise wide-leg trouser in deep emerald velvet, flat front, belt loops, a fluid drape to the floor. Shown with a satin blouse that is not included.
