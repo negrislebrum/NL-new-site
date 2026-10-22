@@ -203,6 +203,13 @@
   .vp .btn-dark{width:100%;margin-top:0}
   .vp-save{width:100%;margin-top:10px;background:#fff;border:1px solid var(--line);padding:13px;font:inherit;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;color:var(--ink)}
   .vp-msg{font-size:13px;color:var(--soft);margin-top:14px;min-height:18px;line-height:1.6}
+  .policy-link{display:block;text-align:center;margin-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .policy-link:hover{color:var(--ink)}
+  .policy{max-width:680px;margin:0 auto}
+  .policy h3{font-size:26px;margin:38px 0 10px}
+  .policy h3:first-child{margin-top:0}
+  .policy p{color:var(--soft)}
+  .policy a{color:var(--ink);border-bottom:1px solid currentColor}
   .vp-x{position:absolute;top:10px;right:12px;z-index:3;background:#fff;border:0;width:40px;height:40px;font-size:24px;cursor:pointer;color:var(--ink);border-radius:50%}
   .ordered-note{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:210;background:var(--ink);color:#fff;padding:16px 26px;font-size:13px;letter-spacing:.04em;max-width:calc(100% - 32px);text-align:center}
   .icons button{position:relative}
@@ -589,6 +596,7 @@
         <div id="vpColorWrap" style="display:none"><div class="vp-lbl">Color</div><div class="vp-sizes" id="vpColors"></div></div>
         <div id="vpEmailWrap"><input class="vp-email" id="vpEmail" type="email" placeholder="Email for your checkout link" autocomplete="email"></div>
         <button class="btn-dark" id="vpBuy">Reserve</button>
+        <a class="policy-link" data-go="returns" href="#returns">Returns &amp; Exchanges</a>
         <button class="vp-save" id="vpSave">Save to wishlist</button>
         <div class="vp-msg" id="vpMsg"></div>
       </div>
@@ -629,6 +637,7 @@
           <div class="co-err" id="coErr" role="alert"></div>
           <button type="submit" class="btn-dark" id="coPay">Pay</button>
           <p class="co-fine">Secured by Square</p>
+          <a class="policy-link" data-go="returns" href="#returns">Returns &amp; Exchanges</a>
         </form>
       </div>
       <div class="co-done" id="coDone">
@@ -740,6 +749,27 @@
     </div></div>
   </section>
 
+  <!-- ============ RETURNS & EXCHANGES ============ -->
+  <section class="view" data-view="returns">
+    <div class="cat-top"><div class="wrap"><div class="crumb">Negris LeBrum / Client Services</div><h1 class="cat-title">Returns &amp; Exchanges</h1></div></div>
+    <div class="section" style="padding-top:10px"><div class="wrap">
+      <div class="policy">
+        <h3>Trunk Show Preorders</h3>
+        <p>You can cancel your preorder for a full refund any time before the trunk show closes on Tuesday, November 3. After that, your piece goes into production and all sales are final.</p>
+        <h3>The Vault</h3>
+        <p>Vault pieces are limited archive pieces and are final sale.</p>
+        <h3>Size Exchanges</h3>
+        <p>If your piece doesn't fit, we'll exchange it once for another size, subject to availability. Contact us within 14 days of delivery. Items must be unworn, with tags attached. The customer pays return shipping.</p>
+        <h3>Damaged or Defective Items</h3>
+        <p>If your order arrives damaged or defective, contact us within 7 days of delivery with photos, and we'll make it right with a replacement or a refund.</p>
+        <h3>International Orders</h3>
+        <p>International orders are final sale. Shipping charges are non-refundable.</p>
+        <h3>Contact</h3>
+        <p>Questions about your order? Email <a href="mailto:staff@negrislebrum.com">staff@negrislebrum.com</a> or ask our AI Style Concierge on the site.</p>
+      </div>
+    </div></div>
+  </section>
+
   <!-- ============ NEWSLETTER ============ -->
   <div class="news">
     <div class="wrap">
@@ -771,7 +801,7 @@
     </div>
     <div>
       <h5>Connect</h5>
-      <a data-go="contact">Contact us</a><a data-go="contact" data-subject="Wholesale / Stockist inquiry">Stockists &amp; Wholesale</a><a data-go="wishlist">Wishlist</a><a data-go="bag">Your Bag</a>
+      <a data-go="contact">Contact us</a><a data-go="returns">Returns &amp; Exchanges</a><a data-go="contact" data-subject="Wholesale / Stockist inquiry">Stockists &amp; Wholesale</a><a data-go="wishlist">Wishlist</a><a data-go="bag">Your Bag</a>
     </div>
   </div>
   <div class="foot-mark">
@@ -1017,6 +1047,7 @@
     };
     function close(){ if(busy) return; co.classList.remove('open'); }
     $('coX').addEventListener('click',close);
+    co.addEventListener('click',e=>{ if(!e.target.closest('[data-go]')) return; if(busy){ e.preventDefault(); e.stopPropagation(); return; } close(); $('vpX').click(); });
     co.addEventListener('click',e=>{ if(e.target===co) close(); });
     $('cdDone').addEventListener('click',()=>{ close(); $('vpX').click(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&co.classList.contains('open')){ e.stopImmediatePropagation(); close(); } },true);
@@ -1073,6 +1104,7 @@
       const sn=e.target.closest('[data-soon]'); if(sn){ const n=document.querySelector('.news'); if(n){ n.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>{ const i=document.getElementById('newsEmail'); if(i) i.focus({preventScroll:true}); },600);} }
     });
     document.getElementById('vpX').addEventListener('click',close);
+    vp.addEventListener('click',e=>{ if(e.target.closest('[data-go]')) close(); });
     vp.addEventListener('click',e=>{ if(e.target===vp) close(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
     window.addEventListener('popstate',close);
