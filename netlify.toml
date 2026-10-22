@@ -2,3 +2,9 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+
+# Apple Pay domain verification — served as-is from /.well-known (publish dir is the repo root).
+[[headers]]
+  for = "/.well-known/apple-developer-merchantid-domain-association"
+  [headers.values]
+    Content-Type = "text/plain"
