@@ -50,7 +50,6 @@ const CATALOG = {
   'n-sweater-vest':        { name: 'The N Sweater Vest',                     amount:  16500, sizes: ['M', 'L'] },
   // Accessories
   'sport-package':         { name: 'The Holiday Sport Package',              amount:  65000, sizes: ONE },
-  'sport-duffel':          { name: 'The Sport Duffel',                       amount:  40000, sizes: ONE },
   'williams-bag':          { name: 'The Williams Bag',                       amount:  59500, sizes: ONE },
   'oval-emerald':          { name: 'The Oval Signature Sunglasses — Emerald', amount: 26500, sizes: ONE },
   'oval-black':            { name: 'The Oval Signature Sunglasses — Black',  amount:  26500, sizes: ONE },
