@@ -189,7 +189,6 @@ KNITWEAR (Knitwear page):
 
 ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum signature packaging — ready to give.
 - The Holiday Sport Package, $650 — holiday price $450 with code SPORT ($200 off this set only, free shipping, one use per customer, through November 3, 2026, limited to 15): the holiday set for the court and beyond — the NEGRIS LEBRUM duffel, a carbon fiber pickleball paddle and its vegan ostrich paddle cover. The first 5 ship immediately; remaining orders ship in 3–4 weeks, in time for Christmas. If it's sold out, say so.
-- The Sport Duffel, $400 (sold separately; code SPORT does not apply): our signature duffel in brown and green, finished with the House red-and-black stripe. Made for the court, the road, and everything between. The first 5 ship immediately; remaining orders ship in 3–4 weeks, in time for Christmas.
 - The Williams Bag, $595: structured carryall in pebbled vegan leather — deep brown with an emerald end panel and a black-and-red stripe — rolled top handles, gold-tone hardware, the Negris LeBrum plate.
 - The Court Set — Paddle & Vegan Ostrich Case, $295: carbon fiber pickleball paddle marked Negris LeBrum, with a zip case in cognac vegan ostrich carrying the Negris LeBrum America wordmark; has a pocket and carries like a satchel.
 - The Oval Signature Sunglasses — Emerald, $265: bold oval frame in emerald translucent, thick glossy arms, gold Negris LeBrum wordmark on the temple, dark lenses.
