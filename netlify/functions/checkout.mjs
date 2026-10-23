@@ -29,6 +29,9 @@ const CATALOG = {
   'patchwork-suede-skirt': { name: 'The Patchwork Skirt (Vegan Suede)',      amount:  45000, sizes: SMLXL },
   'emerald-rose-skirt':    { name: 'The Emerald Rose Skirt',                 amount:  42500, sizes: SMLXL },
   'negris-knit-set':       { name: 'The Houndstooth Mini Skirt',             amount:  22500, sizes: SMLXL },
+  // Knitwear
+  'n-varsity-knit':        { name: 'The N Varsity Knit — Unisex',            amount:  22500, sizes: ['M', 'L'], colors: ['Black', 'Red'] },
+  'no-war-knit':           { name: 'The No War Knit',                        amount:  25000, sizes: ['M', 'L', 'XL'] },
   // The Vault
   'elephant-ear-suit':     { name: 'Velvet & Brocade Elephant Collar Suit',  amount:  79500, sizes: SMLXL },
   'biker-set':             { name: 'Emerald Moto Set',                       amount:  59500, sizes: SMLXL },
@@ -38,6 +41,7 @@ const CATALOG = {
   'curtain-dress':         { name: 'Noir Satin Drape Dress',                 amount:  49500, sizes: SMLXL },
   'audrey':                { name: 'The Audrey',                             amount:  47500, sizes: SMLXL },
   'funkadelic':            { name: 'The Funkadelic Dress',                   amount:  24500, sizes: ['M'] },
+  'n-sweater-vest':        { name: 'The N Sweater Vest',                     amount:  16500, sizes: ['M', 'L'] },
   // Accessories
   'williams-bag':          { name: 'The Williams Bag',                       amount:  59500, sizes: ONE },
   'oval-emerald':          { name: 'The Oval Signature Sunglasses — Emerald', amount: 26500, sizes: ONE },

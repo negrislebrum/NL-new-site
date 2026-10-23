@@ -188,6 +188,10 @@ READY-TO-WEAR — the current collection (Ready-to-Wear page):
 - The Emerald Rose Skirt, $425: A-line skirt in emerald brocade lace with a tonal rose pattern and a clean high waistband, just above the knee.
 - The Houndstooth Mini Skirt, $225: black-and-white houndstooth knit mini with a clean, straight line and a black border at the hem. Shown with the NEGRIS sweater, sold separately.
 
+KNITWEAR (Knitwear page):
+- The N Varsity Knit — Unisex, $225, sizes M and L, in Black or Red: a unisex varsity crewneck in soft rib-trimmed knit, the House 'N' outlined at the chest, double stripes at the sleeve.
+- The No War Knit, $250, sizes M, L and XL: a white V-neck knit with a crossed-out rifle worked in black and red intarsia, black trim at the neck and cuffs. A statement piece.
+
 ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum signature packaging — ready to give.
 - The Williams Bag, $595: structured carryall in pebbled vegan leather — deep brown with an emerald end panel and a black-and-red stripe — rolled top handles, gold-tone hardware, the Negris LeBrum plate.
 - The Court Set — Paddle & Vegan Ostrich Case, $295: carbon fiber pickleball paddle marked Negris LeBrum, with a zip case in cognac vegan ostrich carrying the Negris LeBrum America wordmark; has a pocket and carries like a satchel.
@@ -197,7 +201,7 @@ ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum
 - The Unity Watch, $165: clean white dial marked Negris LeBrum, on a strap that runs from black to a band of color stripes.
 - The Negris Compression Sock, $95: knee-high black logo sock with NEGRIS down the front in white serif letters and the NL monogram; medium compression, fine smooth knit.
 - The NL Crew Sock, $50: black cotton crew sock with a ribbed cuff, white stripes and the NL monogram; made to show above a boot or sneaker.
-- Knitwear and NL Western: more pieces arriving soon — invite them to join the list at the bottom of any page.
+- NL Western: more pieces arriving soon — invite them to join the list at the bottom of any page.
 
 THE VAULT — classics from the house archive, limited quantities; once a piece is gone it stays in the archive. Send Vault shoppers to trunkshowusa.com.
 - Velvet & Brocade Elephant Collar Suit, $795: in-house corduroy brocade blazer with an oversized deep blue-green velvet collar — the elephant ear — three buttons and flap pockets, with the velvet trouser, wide and straight with a brocade side stripe. Sold as a set.
@@ -207,6 +211,7 @@ THE VAULT — classics from the house archive, limited quantities; once a piece 
 - Noir Satin Drape Dress, $495 (new to the Vault): black satin, deep V neckline, ruched draped front opening to a split, stretch waist belt with the gold NL buckle. Sleeveless, back zip.
 - The Audrey, $475: sleeveless, double-breasted mini dress in in-house corduroy brocade with gold buttons and flap pockets.
 - The Funkadelic Dress, $245, Medium only, last one: polished printed poly/spandex stretch dress with a slight mock neck and slight bell sleeve, trimmed in orange at the cuffs and hem.
+- The N Sweater Vest (9A), $165, sizes M and L, limited — few remain: a black knit vest marked with the House 'N', finished with a cream-and-black striped hem.
 - The Emerald Velvet Trouser, $195: high-rise wide-leg trouser in deep emerald velvet, flat front, belt loops, a fluid drape to the floor. Shown with a satin blouse that is not included.
 
 STYLING — pair naturally, for example: the Emerald Rose Skirt or Mini with the Emerald Oval Sunglasses; tailoring with the Williams Bag; the vegan suede pieces with each other or with the NL Crew Sock above a boot; the Houndstooth Mini with the Negris Compression Sock.
