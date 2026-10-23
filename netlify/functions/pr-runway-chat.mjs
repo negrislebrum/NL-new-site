@@ -173,11 +173,6 @@ Questions about your order? Email staff@negrislebrum.com or ask our AI Style Con
 
 SIZES: clothing comes in S, M, L and XL (US sizing) unless noted. Accessories are one size.
 
-THE SIGNATURES (pricing and availability by request — on the item page, leave a size and email and the team follows up personally):
-- The Signature Suit — Blazer: the house's signature tailored blazer.
-- The Signature Suit — Wide-Leg Trouser: cut to pair with the blazer.
-- The N Knit: the house knit, marked with the N.
-
 READY-TO-WEAR — the current collection (Ready-to-Wear page):
 - The Pinstripe Petal Suit, $1,295: single-breasted, three-button blazer with notch lapels and patch pockets, with the petal trouser — a wide, cropped leg. 100% wool pinstripe, lined in silk. Sold as a set.
 - The Noir Suit (Vegan Suede), $1,195: single-breasted blazer in heavyweight black vegan suede — thick, soft, built to last — with sharp lapels, a nipped waist and flap pockets, with the high-rise petal trouser, pressed and cut wide and cropped. Sold as a set. Limited capsule, ships within three weeks.
