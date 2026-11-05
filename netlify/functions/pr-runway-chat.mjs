@@ -188,6 +188,7 @@ READY-TO-WEAR — the current collection (Ready-to-Wear page):
 KNITWEAR (Knitwear page):
 - The N Varsity Knit — Unisex, $225, sizes M and L, in Black or Red: a unisex varsity crewneck in soft rib-trimmed knit, the House 'N' outlined at the chest, double stripes at the sleeve.
 - The No War Knit, $250, sizes M, L and XL: a white V-neck knit with a crossed-out rifle worked in black and red intarsia, black trim at the neck and cuffs. A statement piece.
+- NEGRIS Originals, $185, sizes S, M, L and XL: our signature black crewneck with the NEGRIS wordmark knit in white across the chest; layer it over a crisp collar for the office or wear it on its own.
 
 ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum signature packaging — ready to give.
 - The Holiday Sport Package, $650 — holiday price $450 with code SPORT ($200 off this set only, free shipping, one use per customer, through November 3, 2026, limited to 15): the holiday set for the court and beyond — the NEGRIS LEBRUM duffel, a carbon fiber pickleball paddle and its vegan ostrich paddle cover. The first 5 ship immediately; remaining orders ship in 3–4 weeks, in time for Christmas. If it's sold out, say so.
