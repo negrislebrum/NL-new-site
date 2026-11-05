@@ -39,6 +39,8 @@ const CATALOG = {
   'n-varsity-knit':        { name: 'The N Varsity Knit — Unisex',            amount:  22500, sizes: ['M', 'L'], colors: ['Black', 'Red'] },
   'no-war-knit':           { name: 'The No War Knit',                        amount:  25000, sizes: ['M', 'L', 'XL'] },
   'negris-originals':      { name: 'NEGRIS Originals',                       amount:  18500, sizes: SMLXL },
+  'classic-vest':          { name: 'The Classic Vest',                       amount:   7800, sizes: ['M', 'L'] },
+  'logo-sweater':          { name: 'The Logo Sweater',                       amount:  18500, sizes: ['M', 'L', 'XL'] },
   // The Vault
   'elephant-ear-suit':     { name: 'Velvet & Brocade Elephant Collar Suit',  amount:  79500, sizes: SMLXL },
   'biker-set':             { name: 'Emerald Moto Set',                       amount:  59500, sizes: SMLXL },
