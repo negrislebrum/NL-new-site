@@ -34,7 +34,7 @@ const CATALOG = {
   'emerald-rose-mini':     { name: 'The Emerald Rose Mini',                  amount:  69500, sizes: SMLXL },
   'patchwork-suede-skirt': { name: 'The Patchwork Skirt (Vegan Suede)',      amount:  45000, sizes: SMLXL },
   'emerald-rose-skirt':    { name: 'The Emerald Rose Skirt',                 amount:  42500, sizes: SMLXL },
-  'negris-knit-set':       { name: 'The Houndstooth Mini Skirt',             amount:  22500, sizes: SMLXL },
+  'negris-knit-set':       { name: 'The Houndstooth Mini Skirt',             amount:   8500, sizes: SMLXL },
   // Knitwear
   'n-varsity-knit':        { name: 'The N Varsity Knit — Unisex',            amount:  22500, sizes: ['M', 'L'], colors: ['Black', 'Red'] },
   'no-war-knit':           { name: 'The No War Knit',                        amount:  25000, sizes: ['M', 'L', 'XL'] },
@@ -63,12 +63,12 @@ const CATALOG = {
   'sock-crew':             { name: 'The NL Crew Sock',                       amount:   5000, sizes: ONE },
 };
 
-// off: cents taken off the item. expires: the code stops working at this moment (end of Nov 3, US Eastern).
+// off: cents taken off the item. expires: the code stops working at this moment (end of Nov 23, US Central).
 // limit: total uses; once reached, the listed pieces are sold out. perCustomer: uses per email address.
 const CODES = {
   SPORT: {
-    items: ['sport-package'], off: 20000, freeShipping: true, limit: 15, perCustomer: 1,
-    expires: Date.parse('2026-11-04T05:00:00Z'),
+    items: ['sport-package'], off: 37500, freeShipping: true, limit: 5, perCustomer: 1,
+    expires: Date.parse('2026-11-24T06:00:00Z'), // 11:59 PM CST Nov 23 is the last valid minute
     soldOut: 'The Holiday Sport Package is sold out.',
   },
 };
