@@ -183,7 +183,7 @@ READY-TO-WEAR — the current collection (Ready-to-Wear page):
 - The Emerald Rose Mini, $695: A-line mini dress in emerald brocade lace with a sheer black chiffon yoke, high neck and full chiffon sleeves with emerald cuffs.
 - The Patchwork Skirt (Vegan Suede), $450: A-line mini pieced in black, burgundy and cognac heavyweight vegan suede, with a full-length gold-tone front zip, two cognac patch pockets and a clean black back. Limited capsule, ships within three weeks.
 - The Emerald Rose Skirt, $425: A-line skirt in emerald brocade lace with a tonal rose pattern and a clean high waistband, just above the knee.
-- The Houndstooth Mini Skirt, $225: black-and-white houndstooth knit mini with a clean, straight line and a black border at the hem. Shown with the NEGRIS sweater, sold separately.
+- The Houndstooth Mini Skirt, Black Friday sale $85 (regularly $175): black-and-white houndstooth knit mini with a clean, straight line and a black border at the hem. Shown with the NEGRIS sweater, sold separately.
 
 KNITWEAR (Knitwear page):
 - The N Varsity Knit — Unisex, $225, sizes M and L, in Black or Red: a unisex varsity crewneck in soft rib-trimmed knit, the House 'N' outlined at the chest, double stripes at the sleeve.
@@ -193,7 +193,7 @@ KNITWEAR (Knitwear page):
 - The Logo Sweater, $185, sizes M, L and XL — 'The Return of the Logo Sweater': our signature statement knit, as seen in Vanity Fair, back in soft ivory with an allover diagonal NEGRIS LEBRUM jacquard in bold black, ribbed cuffs, collar and hem.
 
 ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum signature packaging — ready to give.
-- The Holiday Sport Package, $650 — holiday price $450 with code SPORT ($200 off this set only, free shipping, one use per customer, through November 3, 2026, limited to 15): the holiday set for the court and beyond — the NEGRIS LEBRUM duffel, a carbon fiber pickleball paddle and its vegan ostrich paddle cover. The first 5 ship immediately; remaining orders ship in 3–4 weeks, in time for Christmas. If it's sold out, say so.
+- The Holiday Sport Package, $650 — holiday price $275 with code SPORT ($375 off this set only, free shipping, one use per customer, through 11:59 PM Central on November 23, 2026, limited to 5): the holiday set for the court and beyond — the NEGRIS LEBRUM duffel, a carbon fiber pickleball paddle and its vegan ostrich paddle cover. The first 5 ship immediately; remaining orders ship in 3–4 weeks, in time for Christmas. If it's sold out, say so.
 - The Williams Bag, $595: structured carryall in pebbled vegan leather — deep brown with an emerald end panel and a black-and-red stripe — rolled top handles, gold-tone hardware, the Negris LeBrum plate.
 - The Court Set — Paddle & Vegan Ostrich Case, $295: carbon fiber pickleball paddle marked Negris LeBrum, with a zip case in cognac vegan ostrich carrying the Negris LeBrum America wordmark; has a pocket and carries like a satchel.
 - The Oval Signature Sunglasses — Emerald, $265: bold oval frame in emerald translucent, thick glossy arms, gold Negris LeBrum wordmark on the temple, dark lenses.
