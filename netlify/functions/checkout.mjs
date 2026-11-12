@@ -67,7 +67,7 @@ const CATALOG = {
 // limit: total uses; once reached, the listed pieces are sold out. perCustomer: uses per email address.
 const CODES = {
   SPORT: {
-    items: ['sport-package'], off: 37500, freeShipping: true, limit: 5, perCustomer: 1,
+    items: ['sport-package'], off: 37500, freeShipping: true, limit: 6, perCustomer: 1,
     expires: Date.parse('2026-11-24T06:00:00Z'), // 11:59 PM CST Nov 23 is the last valid minute
     soldOut: 'The Holiday Sport Package is sold out.',
   },

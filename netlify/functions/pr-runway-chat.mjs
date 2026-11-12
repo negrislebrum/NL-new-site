@@ -193,7 +193,7 @@ KNITWEAR (Knitwear page):
 - The Logo Sweater, $185, sizes M, L and XL — 'The Return of the Logo Sweater': our signature statement knit, as seen in Vanity Fair, back in soft ivory with an allover diagonal NEGRIS LEBRUM jacquard in bold black, ribbed cuffs, collar and hem.
 
 ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum signature packaging — ready to give.
-- The Holiday Sport Package, $650 — holiday price $275 with code SPORT ($375 off this set only, free shipping, one use per customer, through 11:59 PM Central on November 23, 2026, limited to 5): the holiday set for the court and beyond — the NEGRIS LEBRUM duffel, a carbon fiber pickleball paddle and its vegan ostrich paddle cover. The first 5 ship immediately; remaining orders ship in 3–4 weeks, in time for Christmas. If it's sold out, say so.
+- The Holiday Sport Package, $650: the holiday set for the court and beyond — the NEGRIS LEBRUM duffel, a carbon fiber pickleball paddle and its vegan ostrich paddle cover. The first 5 ship immediately; remaining orders ship in 3–4 weeks, in time for Christmas. If it's sold out, say so.
 - The Williams Bag, $595: structured carryall in pebbled vegan leather — deep brown with an emerald end panel and a black-and-red stripe — rolled top handles, gold-tone hardware, the Negris LeBrum plate.
 - The Court Set — Paddle & Vegan Ostrich Case, $295: carbon fiber pickleball paddle marked Negris LeBrum, with a zip case in cognac vegan ostrich carrying the Negris LeBrum America wordmark; has a pocket and carries like a satchel.
 - The Oval Signature Sunglasses — Emerald, $265: bold oval frame in emerald translucent, thick glossy arms, gold Negris LeBrum wordmark on the temple, dark lenses.
