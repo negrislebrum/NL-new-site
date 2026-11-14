@@ -24,6 +24,8 @@ import { getDatabase } from '@netlify/database';
 
 const ONE = ['One Size'];
 const SMLXL = ['S', 'M', 'L', 'XL'];
+// NL Live preorders close Dec 15, 2026, 11:59 PM Central.
+const PREORDER_CLOSE = Date.parse('2026-12-15T23:59:59-06:00');
 
 const CATALOG = {
   // Ready-to-Wear
@@ -61,6 +63,29 @@ const CATALOG = {
   'unity-watch':           { name: 'The Unity Watch',                        amount:  16500, sizes: ONE },
   'sock-compression':      { name: 'The Negris Compression Sock',            amount:   9500, sizes: ONE },
   'sock-crew':             { name: 'The NL Crew Sock',                       amount:   5000, sizes: ONE },
+  // NL Live — The Exclusive Preorder (/live). Made to order, no cap. Delivery January–February 2027.
+  // Same preorder prices as trunkshowusa.com; checkout for these stops when preorders close.
+  'live-01':               { name: 'NL Live Preorder — Look 01',                        amount:  57500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-02':               { name: 'NL Live Preorder — Look 02',                        amount:  57500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-03':               { name: 'NL Live Preorder — Look 03',                        amount:  34500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-04':               { name: 'NL Live Preorder — Look 04',                        amount:  39500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-05':               { name: 'NL Live Preorder — Look 05',                        amount:  35500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-06':               { name: 'NL Live Preorder — Look 06',                        amount:  37500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-07':               { name: 'NL Live Preorder — Look 07',                        amount:  72500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-08':               { name: 'NL Live Preorder — Look 08',                        amount:  82500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-09':               { name: 'NL Live Preorder — Look 09',                        amount:  29500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-10':               { name: 'NL Live Preorder — Look 10',                        amount:  34500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-11':               { name: 'NL Live Preorder — Look 11',                        amount:  44500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-12':               { name: 'NL Live Preorder — The Holiday Set (Look 12)',      amount:  59500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-13':               { name: 'NL Live Preorder — Look 13',                        amount:  27500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-14':               { name: 'NL Live Preorder — Look 14',                        amount:  54500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-15':               { name: 'NL Live Preorder — Look 15',                        amount:  29500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-16':               { name: 'NL Live Preorder — Look 16',                        amount:  81500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-17':               { name: 'NL Live Preorder — Look 17',                        amount:  44500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-18':               { name: 'NL Live Preorder — Look 18',                        amount:  52500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-19':               { name: 'NL Live Preorder — Look 19',                        amount:  91000, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-20':               { name: 'NL Live Preorder — Look 20',                        amount:  37500, sizes: SMLXL, closes: PREORDER_CLOSE },
+  'live-21':               { name: 'NL Live Preorder — Look 21',                        amount:  35500, sizes: SMLXL, closes: PREORDER_CLOSE },
 };
 
 // off: cents taken off the item. expires: the code stops working at this moment (end of Nov 23, US Central).
@@ -245,6 +270,9 @@ export default async (req) => {
   const id = str(body.id, 60);
   const item = Object.prototype.hasOwnProperty.call(CATALOG, id) ? CATALOG[id] : null;
   if (!item) return Response.json({ ok: false, error: 'This piece isn’t available for checkout.' }, { status: 400 });
+  if (item.closes && Date.now() > item.closes) {
+    return Response.json({ ok: false, error: 'Preorders for this look closed December 15, 2026.' }, { status: 410 });
+  }
 
   // Pieces whose code has reached its limit can't be bought; a code must be valid for the piece.
   let sold = {};
