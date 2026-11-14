@@ -8,3 +8,14 @@
   for = "/.well-known/apple-developer-merchantid-domain-association"
   [headers.values]
     Content-Type = "text/plain"
+
+# NL Live — /live is a page of the single-page site.
+[[redirects]]
+  from = "/live"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/live/"
+  to = "/index.html"
+  status = 200
