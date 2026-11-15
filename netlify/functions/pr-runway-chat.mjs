@@ -171,18 +171,18 @@ International orders are final sale. Shipping charges are non-refundable.
 Contact
 Questions about your order? Email staff@negrislebrum.com or ask our AI Style Concierge on the site.
 
-- Join the list at the bottom of any page for 15% off a first order. There are no other discounts; never invent one or negotiate on price.
+- Join the list at the bottom of any page for 15% off a first order. Beyond the Black Friday sale prices listed here, there are no other discounts; never invent one or negotiate on price.
 
 SIZES: clothing comes in S, M, L and XL (US sizing) unless noted. Accessories are one size.
 
 READY-TO-WEAR — the current collection (Ready-to-Wear page):
-- The Pinstripe Petal Suit, $1,295: single-breasted, three-button blazer with notch lapels and patch pockets, with the petal trouser — a wide, cropped leg. 100% wool pinstripe, lined in silk. Sold as a set.
-- The Noir Suit (Vegan Suede), $1,195: single-breasted blazer in heavyweight black vegan suede — thick, soft, built to last — with sharp lapels, a nipped waist and flap pockets, with the high-rise petal trouser, pressed and cut wide and cropped. Sold as a set. Limited capsule, ships within three weeks.
-- The Emerald Rose Suit, $1,095: tailored jacket and straight-leg trouser in emerald brocade lace with a tonal rose pattern; wide pointed collar, three-button front. Sold as a set.
-- The Cognac Jumpsuit (Vegan Suede), $795: long-sleeve jumpsuit in heavyweight cognac vegan suede with a high stand collar, half-zip front, drawstring waist, and black stripes from shoulder to wrist and down each wide leg. Limited capsule, ships within three weeks.
-- The Emerald Rose Mini, $695: A-line mini dress in emerald brocade lace with a sheer black chiffon yoke, high neck and full chiffon sleeves with emerald cuffs.
-- The Patchwork Skirt (Vegan Suede), $450: A-line mini pieced in black, burgundy and cognac heavyweight vegan suede, with a full-length gold-tone front zip, two cognac patch pockets and a clean black back. Limited capsule, ships within three weeks.
-- The Emerald Rose Skirt, $425: A-line skirt in emerald brocade lace with a tonal rose pattern and a clean high waistband, just above the knee.
+- The Pinstripe Petal Suit, Black Friday sale $835 (regularly $1,295): single-breasted, three-button blazer with notch lapels and patch pockets, with the petal trouser — a wide, cropped leg. 100% wool pinstripe, lined in silk. Sold as a set.
+- The Noir Suit (Vegan Suede), Black Friday sale $775 (regularly $1,195): single-breasted blazer in heavyweight black vegan suede — thick, soft, built to last — with sharp lapels, a nipped waist and flap pockets, with the high-rise petal trouser, pressed and cut wide and cropped. Sold as a set. Limited capsule, ships within three weeks.
+- The Emerald Rose Suit, Black Friday sale $495 (regularly $1,095): tailored jacket and straight-leg trouser in emerald brocade lace with a tonal rose pattern; wide pointed collar, three-button front. Sold as a set.
+- The Cognac Jumpsuit (Vegan Suede), Black Friday sale $515 (regularly $795): long-sleeve jumpsuit in heavyweight cognac vegan suede with a high stand collar, half-zip front, drawstring waist, and black stripes from shoulder to wrist and down each wide leg. Limited capsule, ships within three weeks.
+- The Emerald Rose Mini, Black Friday sale $345 (regularly $695): A-line mini dress in emerald brocade lace with a sheer black chiffon yoke, high neck and full chiffon sleeves with emerald cuffs.
+- The Patchwork Skirt (Vegan Suede), Black Friday sale $285 (regularly $450): A-line mini pieced in black, burgundy and cognac heavyweight vegan suede, with a full-length gold-tone front zip, two cognac patch pockets and a clean black back. Limited capsule, ships within three weeks.
+- The Emerald Rose Skirt, Black Friday sale $275 (regularly $425): A-line skirt in emerald brocade lace with a tonal rose pattern and a clean high waistband, just above the knee.
 - The Houndstooth Mini Skirt, Black Friday sale $85 (regularly $175): black-and-white houndstooth knit mini with a clean, straight line and a black border at the hem. Shown with the NEGRIS sweater, sold separately.
 
 KNITWEAR (Knitwear page):
@@ -205,15 +205,15 @@ ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum
 - NL Western: more pieces arriving soon — invite them to join the list at the bottom of any page.
 
 THE VAULT — classics from the house archive, limited quantities; once a piece is gone it stays in the archive. Send Vault shoppers to trunkshowusa.com.
-- Velvet & Brocade Elephant Collar Suit, $795: in-house corduroy brocade blazer with an oversized deep blue-green velvet collar — the elephant ear — three buttons and flap pockets, with the velvet trouser, wide and straight with a brocade side stripe. Sold as a set.
-- Emerald Moto Set, $595: vegan leather biker jacket with a velvet yoke and stand collar, ring-pull zip and zip pockets, with a vegan leather mini skirt with patch pockets. Sold as a set.
-- Sarah's Dress, $595: midi in in-house corduroy brocade with a deep blue-green velvet yoke and center panel, stand collar, long brocade sleeves with buttoned cuffs.
-- The Cowl-Neck Dress, $525: long-sleeve velvet cowl-neck bodice joined to a corduroy brocade mini skirt with a three-button front panel. One dress, two textures.
-- Noir Satin Drape Dress, $495 (new to the Vault): black satin, deep V neckline, ruched draped front opening to a split, stretch waist belt with the gold NL buckle. Sleeveless, back zip.
-- The Audrey, $475: sleeveless, double-breasted mini dress in in-house corduroy brocade with gold buttons and flap pockets.
-- The Funkadelic Dress, $245, Medium only, last one: polished printed poly/spandex stretch dress with a slight mock neck and slight bell sleeve, trimmed in orange at the cuffs and hem.
-- The N Sweater Vest (9A), $165, sizes M and L, limited — few remain: a black knit vest marked with the House 'N', finished with a cream-and-black striped hem.
-- The Emerald Velvet Trouser, $195: high-rise wide-leg trouser in deep emerald velvet, flat front, belt loops, a fluid drape to the floor. Shown with a satin blouse that is not included.
+- Velvet & Brocade Elephant Collar Suit, Black Friday sale $395 (regularly $795): in-house corduroy brocade blazer with an oversized deep blue-green velvet collar — the elephant ear — three buttons and flap pockets, with the velvet trouser, wide and straight with a brocade side stripe. Sold as a set.
+- Emerald Moto Set, Black Friday sale $295 (regularly $595): vegan leather biker jacket with a velvet yoke and stand collar, ring-pull zip and zip pockets, with a vegan leather mini skirt with patch pockets. Sold as a set.
+- Sarah's Dress, Black Friday sale $295 (regularly $595): midi in in-house corduroy brocade with a deep blue-green velvet yoke and center panel, stand collar, long brocade sleeves with buttoned cuffs.
+- The Cowl-Neck Dress, Black Friday sale $255 (regularly $525): long-sleeve velvet cowl-neck bodice joined to a corduroy brocade mini skirt with a three-button front panel. One dress, two textures.
+- Noir Satin Drape Dress, Black Friday sale $245 (regularly $495; new to the Vault): black satin, deep V neckline, ruched draped front opening to a split, stretch waist belt with the gold NL buckle. Sleeveless, back zip.
+- The Audrey, Black Friday sale $235 (regularly $475): sleeveless, double-breasted mini dress in in-house corduroy brocade with gold buttons and flap pockets.
+- The Funkadelic Dress, Black Friday sale $115 (regularly $245), Medium only, last one: polished printed poly/spandex stretch dress with a slight mock neck and slight bell sleeve, trimmed in orange at the cuffs and hem.
+- The N Sweater Vest (9A), Black Friday sale $75 (regularly $165), sizes M and L, limited — few remain: a black knit vest marked with the House 'N', finished with a cream-and-black striped hem.
+- The Emerald Velvet Trouser, Black Friday sale $95 (regularly $195): high-rise wide-leg trouser in deep emerald velvet, flat front, belt loops, a fluid drape to the floor. Shown with a satin blouse that is not included.
 
 STYLING — pair naturally, for example: the Emerald Rose Skirt or Mini with the Emerald Oval Sunglasses; tailoring with the Williams Bag; the vegan suede pieces with each other or with the NL Crew Sock above a boot; the Houndstooth Mini with the Negris Compression Sock.
 
