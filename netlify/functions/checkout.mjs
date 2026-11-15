@@ -29,14 +29,16 @@ const XSXL = ['XS', 'S', 'M', 'L', 'XL'];
 const PREORDER_CLOSE = Date.parse('2026-12-15T23:59:59-06:00');
 
 const CATALOG = {
+  // Black Friday prices — Ready-to-Wear 35% off (Emerald Rose Suit and Mini 50% off), The Vault 50% off,
+  // rounded down to end in 5. Regular prices are the "was" values in index.html, shown struck through there.
   // Ready-to-Wear
-  'pinstripe-petal-suit':  { name: 'The Pinstripe Petal Suit',               amount: 129500, sizes: SMLXL },
-  'emerald-rose-suit':     { name: 'The Emerald Rose Suit',                  amount: 109500, sizes: SMLXL },
-  'noir-suede-suit':       { name: 'The Noir Suit (Vegan Suede)',            amount: 119500, sizes: SMLXL },
-  'cognac-suede-jumpsuit': { name: 'The Cognac Jumpsuit (Vegan Suede)',      amount:  79500, sizes: SMLXL },
-  'emerald-rose-mini':     { name: 'The Emerald Rose Mini',                  amount:  69500, sizes: SMLXL },
-  'patchwork-suede-skirt': { name: 'The Patchwork Skirt (Vegan Suede)',      amount:  45000, sizes: SMLXL },
-  'emerald-rose-skirt':    { name: 'The Emerald Rose Skirt',                 amount:  42500, sizes: SMLXL },
+  'pinstripe-petal-suit':  { name: 'The Pinstripe Petal Suit',               amount: 83500, sizes: SMLXL },
+  'emerald-rose-suit':     { name: 'The Emerald Rose Suit',                  amount: 49500, sizes: SMLXL },
+  'noir-suede-suit':       { name: 'The Noir Suit (Vegan Suede)',            amount: 77500, sizes: SMLXL },
+  'cognac-suede-jumpsuit': { name: 'The Cognac Jumpsuit (Vegan Suede)',      amount:  51500, sizes: SMLXL },
+  'emerald-rose-mini':     { name: 'The Emerald Rose Mini',                  amount:  34500, sizes: SMLXL },
+  'patchwork-suede-skirt': { name: 'The Patchwork Skirt (Vegan Suede)',      amount:  28500, sizes: SMLXL },
+  'emerald-rose-skirt':    { name: 'The Emerald Rose Skirt',                 amount:  27500, sizes: SMLXL },
   'negris-knit-set':       { name: 'The Houndstooth Mini Skirt',             amount:   8500, sizes: SMLXL },
   // Knitwear
   'n-varsity-knit':        { name: 'The N Varsity Knit — Unisex',            amount:  22500, sizes: ['M', 'L'], colors: ['Black', 'Red'] },
@@ -45,19 +47,18 @@ const CATALOG = {
   'classic-vest':          { name: 'The Classic Vest',                       amount:   7800, sizes: ['M', 'L'] },
   'logo-sweater':          { name: 'The Logo Sweater',                       amount:  18500, sizes: ['M', 'L', 'XL'] },
   // The Vault
-  'elephant-ear-suit':     { name: 'Velvet & Brocade Elephant Collar Suit',  amount:  79500, sizes: SMLXL },
-  'biker-set':             { name: 'Emerald Moto Set',                       amount:  59500, sizes: SMLXL },
-  'sarahs-dress':          { name: "Sarah's Dress",                          amount:  59500, sizes: SMLXL },
-  'pearl-satin-set':       { name: 'The Emerald Velvet Trouser',             amount:  19500, sizes: SMLXL },
-  'cowl-neck-dress':       { name: 'The Cowl-Neck Dress',                    amount:  52500, sizes: SMLXL },
-  'curtain-dress':         { name: 'Noir Satin Drape Dress',                 amount:  49500, sizes: SMLXL },
-  'audrey':                { name: 'The Audrey',                             amount:  47500, sizes: SMLXL },
-  'funkadelic':            { name: 'The Funkadelic Dress',                   amount:  24500, sizes: ['M'] },
-  'n-sweater-vest':        { name: 'The N Sweater Vest',                     amount:  16500, sizes: ['M', 'L'] },
-  // Black Friday prices (regular: Apron $375, Fingerprint $395, Romper Set $325 — shown struck through on the page).
-  'apron-dress':           { name: 'Apron Dress',                            amount:  19500, sizes: XSXL },
-  'fingerprint-dress':     { name: 'Fingerprint Dress',                      amount:  21500, sizes: XSXL },
-  'polka-dot-romper-set':  { name: 'Polka Dot Romper Set (with cotton logo socks)', amount: 17500, sizes: XSXL },
+  'elephant-ear-suit':     { name: 'Velvet & Brocade Elephant Collar Suit',  amount:  39500, sizes: SMLXL },
+  'biker-set':             { name: 'Emerald Moto Set',                       amount:  29500, sizes: SMLXL },
+  'sarahs-dress':          { name: "Sarah's Dress",                          amount:  29500, sizes: SMLXL },
+  'pearl-satin-set':       { name: 'The Emerald Velvet Trouser',             amount:   9500, sizes: SMLXL },
+  'cowl-neck-dress':       { name: 'The Cowl-Neck Dress',                    amount:  25500, sizes: SMLXL },
+  'curtain-dress':         { name: 'Noir Satin Drape Dress',                 amount:  24500, sizes: SMLXL },
+  'audrey':                { name: 'The Audrey',                             amount:  23500, sizes: SMLXL },
+  'funkadelic':            { name: 'The Funkadelic Dress',                   amount:  11500, sizes: ['M'] },
+  'n-sweater-vest':        { name: 'The N Sweater Vest',                     amount:   7500, sizes: ['M', 'L'] },
+  'apron-dress':           { name: 'Apron Dress',                            amount:  18500, sizes: XSXL },
+  'fingerprint-dress':     { name: 'Fingerprint Dress',                      amount:  19500, sizes: XSXL },
+  'polka-dot-romper-set':  { name: 'Polka Dot Romper Set (with cotton logo socks)', amount: 15500, sizes: XSXL },
   // Accessories
   'sport-package':         { name: 'The Holiday Sport Package',              amount:  65000, sizes: ONE },
   'williams-bag':          { name: 'The Williams Bag',                       amount:  59500, sizes: ONE },
