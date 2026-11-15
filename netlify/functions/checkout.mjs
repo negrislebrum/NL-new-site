@@ -24,6 +24,7 @@ import { getDatabase } from '@netlify/database';
 
 const ONE = ['One Size'];
 const SMLXL = ['S', 'M', 'L', 'XL'];
+const XSXL = ['XS', 'S', 'M', 'L', 'XL'];
 // NL Live preorders close Dec 15, 2026, 11:59 PM Central.
 const PREORDER_CLOSE = Date.parse('2026-12-15T23:59:59-06:00');
 
@@ -53,6 +54,10 @@ const CATALOG = {
   'audrey':                { name: 'The Audrey',                             amount:  47500, sizes: SMLXL },
   'funkadelic':            { name: 'The Funkadelic Dress',                   amount:  24500, sizes: ['M'] },
   'n-sweater-vest':        { name: 'The N Sweater Vest',                     amount:  16500, sizes: ['M', 'L'] },
+  // Black Friday prices (regular: Apron $375, Fingerprint $395, Romper Set $325 — shown struck through on the page).
+  'apron-dress':           { name: 'Apron Dress',                            amount:  19500, sizes: XSXL },
+  'fingerprint-dress':     { name: 'Fingerprint Dress',                      amount:  21500, sizes: XSXL },
+  'polka-dot-romper-set':  { name: 'Polka Dot Romper Set (with cotton logo socks)', amount: 17500, sizes: XSXL },
   // Accessories
   'sport-package':         { name: 'The Holiday Sport Package',              amount:  65000, sizes: ONE },
   'williams-bag':          { name: 'The Williams Bag',                       amount:  59500, sizes: ONE },
