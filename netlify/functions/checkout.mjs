@@ -47,6 +47,8 @@ const CATALOG = {
   'classic-vest':          { name: 'The Classic Vest',                       amount:   7800, sizes: ['M', 'L'] },
   'logo-sweater':          { name: 'The Logo Sweater',                       amount:  18500, sizes: ['M', 'L', 'XL'] },
   // The Vault
+  // stock: per-size inventory in Netlify Database (size_inventory). usOnly: ships to US addresses only.
+  '80s-jumpsuit':          { name: "The '80s Jumpsuit",                      amount:  18750, sizes: ['S', 'M', 'L'], stock: true, usOnly: true },
   'elephant-ear-suit':     { name: 'Velvet & Brocade Elephant Collar Suit',  amount:  39500, sizes: SMLXL },
   'biker-set':             { name: 'Emerald Moto Set',                       amount:  29500, sizes: SMLXL },
   'sarahs-dress':          { name: "Sarah's Dress",                          amount:  29500, sizes: SMLXL },
@@ -94,7 +96,7 @@ const CATALOG = {
   'live-21':               { name: 'NL Live Preorder — Look 21',                        amount:  35500, sizes: SMLXL, closes: PREORDER_CLOSE },
 };
 
-// off: cents taken off the item. expires: the code stops working at this moment (end of Nov 23, US Central).
+// off: cents taken off the item, or pct: percent taken off the item's price. expires: the code stops working at this moment (end of Nov 23, US Central).
 // limit: total uses; once reached, the listed pieces are sold out. perCustomer: uses per email address.
 const CODES = {
   SPORT: {
@@ -102,7 +104,10 @@ const CODES = {
     expires: Date.parse('2026-11-24T06:00:00Z'), // 11:59 PM CST Nov 23 is the last valid minute
     soldOut: 'The Holiday Sport Package is sold out.',
   },
+  // Extra 25% off The '80s Jumpsuit. Never applied automatically — the shopper enters it at checkout.
+  VAULT25: { items: ['80s-jumpsuit'], pct: 25 },
 };
+function codeOff(c, item) { return c.pct ? Math.round(item.amount * c.pct / 100) : c.off; }
 // An unpaid hold on a code use is released after this long (a checkout that never finished).
 const HOLD_MINUTES = 15;
 
@@ -127,11 +132,32 @@ async function soldOut() {
   return out;
 }
 
+// Sizes at 0 for pieces with per-size stock: { id: ['S', ...] }. Counts never leave the server.
+async function soldOutSizes() {
+  const out = {};
+  const ids = Object.keys(CATALOG).filter((id) => CATALOG[id].stock);
+  if (!ids.length) return out;
+  const rows = await db().sql`SELECT item_id, size FROM size_inventory WHERE item_id = ANY(${ids}) AND remaining <= 0`;
+  for (const r of rows) (out[r.item_id] = out[r.item_id] || []).push(r.size);
+  return out;
+}
+
+// Takes one unit of a size. Returns false when that size has none left.
+async function takeStock(id, size) {
+  const rows = await db().sql`
+    UPDATE size_inventory SET remaining = remaining - 1
+    WHERE item_id = ${id} AND size = ${size} AND remaining > 0 RETURNING item_id`;
+  return rows.length > 0;
+}
+async function returnStock(id, size) {
+  await db().sql`UPDATE size_inventory SET remaining = remaining + 1 WHERE item_id = ${id} AND size = ${size}`;
+}
+
 function checkCode(id, raw) {
   const code = str(raw, 30).toUpperCase();
   const c = Object.prototype.hasOwnProperty.call(CODES, code) ? CODES[code] : null;
   if (!c) return { error: 'That code isn’t valid.' };
-  if (Date.now() >= c.expires) return { error: 'Code ' + code + ' has expired.' };
+  if (c.expires && Date.now() >= c.expires) return { error: 'Code ' + code + ' has expired.' };
   if (!c.items.includes(id)) return { error: 'Code ' + code + ' doesn’t apply to this piece.' };
   return { code, c };
 }
@@ -257,8 +283,13 @@ export default async (req) => {
     if (!loc) return Response.json({ ready: false });
     let sold = {};
     try { sold = await soldOut(); } catch (e) { console.error('Sold-out check failed', e && e.message); }
+    let sizesOut = {};
+    try { sizesOut = await soldOutSizes(); } catch (e) { console.error('Size stock check failed', e && e.message); }
+    for (const [sid, gone] of Object.entries(sizesOut)) {
+      if (CATALOG[sid].sizes.every((z) => gone.includes(z))) sold[sid] = CATALOG[sid].name + ' is sold out.';
+    }
     return Response.json(
-      { ready: true, applicationId: cfg.applicationId, locationId: loc, environment: cfg.environment, catalog: publicCatalog(), soldOut: sold },
+      { ready: true, applicationId: cfg.applicationId, locationId: loc, environment: cfg.environment, catalog: publicCatalog(), soldOut: sold, soldOutSizes: sizesOut },
       { headers: { 'Cache-Control': 'no-store' } },
     );
   }
@@ -292,8 +323,8 @@ export default async (req) => {
 
   if (url.pathname.endsWith('/code')) {
     return Response.json({
-      ok: true, code: promo ? promo.code : '', discount: promo ? promo.c.off : 0,
-      amount: item.amount - (promo ? promo.c.off : 0), freeShipping: !!(promo && promo.c.freeShipping),
+      ok: true, code: promo ? promo.code : '', discount: promo ? codeOff(promo.c, item) : 0,
+      amount: item.amount - (promo ? codeOff(promo.c, item) : 0), freeShipping: !!(promo && promo.c.freeShipping),
     });
   }
   const size = str(body.size, 20);
@@ -314,6 +345,9 @@ export default async (req) => {
   if (!buyer.givenName || !buyer.familyName || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(buyer.email) || !buyer.address1 || !buyer.city || !buyer.postal) {
     return Response.json({ ok: false, error: 'Please complete your name, email and shipping address.' }, { status: 400 });
   }
+  if (item.usOnly && buyer.country !== 'US') {
+    return Response.json({ ok: false, error: item.name + ' ships within the United States only.' }, { status: 400 });
+  }
 
   const loc = await locationId(cfg);
   if (!loc) return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
@@ -332,20 +366,36 @@ export default async (req) => {
     first_name: buyer.givenName,
     last_name: buyer.familyName,
   };
-  // Hold one use of the code for this customer before charging; it's released if the payment fails.
+  // Hold one use of a limited code for this customer before charging; it's released if the payment fails.
   let hold = null;
-  if (promo) {
+  if (promo && (promo.c.limit || promo.c.perCustomer)) {
     try { hold = await holdCode(promo.code, promo.c, buyer.email.toLowerCase(), idempotencyKey, id); } catch (e) {
       console.error('Code hold failed', e && e.message);
       return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
     }
     if (hold.error) return Response.json({ ok: false, soldOut: !!hold.soldOut, error: hold.error }, { status: 409 });
   }
-  const discount = promo ? promo.c.off : 0;
+  const releaseHold = () => hold ? db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {}) : null;
+
+  // Take one unit of the size before charging; it goes back if the payment fails.
+  let tookStock = false;
+  if (item.stock) {
+    try { tookStock = await takeStock(id, size); } catch (e) {
+      console.error('Stock check failed', e && e.message);
+      await releaseHold();
+      return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
+    }
+    if (!tookStock) {
+      await releaseHold();
+      return Response.json({ ok: false, sizeSoldOut: size, error: 'Size ' + size + ' is sold out. Please choose another size.' }, { status: 409 });
+    }
+  }
+
+  const discount = promo ? codeOff(promo.c, item) : 0;
   const amount = item.amount - discount;
 
   const note = [item.name, 'Size: ' + size, color ? 'Color: ' + color : '',
-    promo ? 'Code ' + promo.code + ' (−' + '$' + (discount / 100) + ')' : '', promo && promo.c.freeShipping ? 'Free shipping' : '',
+    promo ? 'Code ' + promo.code + ' (−' + '$' + (discount / 100).toFixed(2) + ')' : '', promo && promo.c.freeShipping ? 'Free shipping' : '',
     buyer.phone ? 'Phone: ' + buyer.phone : '']
     .filter(Boolean).join(' · ').slice(0, 500);
 
@@ -366,7 +416,8 @@ export default async (req) => {
   const r = await square(cfg, '/v2/payments', { method: 'POST', body: JSON.stringify(payment) });
   if (!r.ok || !r.data.payment) {
     console.error('Square payment failed', r.status, JSON.stringify((r.data.errors || []).map((e) => ({ code: e.code, category: e.category }))));
-    if (hold) await db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {});
+    await releaseHold();
+    if (tookStock) await returnStock(id, size).catch((e) => console.error('Stock not returned', id, size, e && e.message));
     return Response.json({ ok: false, error: shopperMessage(r.data.errors) }, { status: 402 });
   }
 
@@ -386,6 +437,7 @@ export default async (req) => {
     amount,
     code: promo ? promo.code : '',
     discount,
+    freeShipping: !!(promo && promo.c.freeShipping),
   });
 };
 
