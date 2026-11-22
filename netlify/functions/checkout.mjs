@@ -59,6 +59,8 @@ const CATALOG = {
   'apron-dress':           { name: 'Apron Dress',                            amount:  18500, sizes: XSXL },
   'fingerprint-dress':     { name: 'Fingerprint Dress',                      amount:  19500, sizes: XSXL },
   'polka-dot-romper-set':  { name: 'Polka Dot Romper Set (with cotton logo socks)', amount: 15500, sizes: XSXL },
+  // stock: per-size counts live in Netlify Database (inventory). usOnly: ships to US addresses only.
+  '80s-jumpsuit':          { name: "The '80s Jumpsuit",                      amount:  18750, sizes: ['S', 'M', 'L'], stock: true, usOnly: true },
   // Accessories
   'sport-package':         { name: 'The Holiday Sport Package',              amount:  65000, sizes: ONE },
   'williams-bag':          { name: 'The Williams Bag',                       amount:  59500, sizes: ONE },
@@ -102,6 +104,11 @@ const CODES = {
     expires: Date.parse('2026-11-24T06:00:00Z'), // 11:59 PM CST Nov 23 is the last valid minute
     soldOut: 'The Holiday Sport Package is sold out.',
   },
+  // The customer enters VAULT25 at checkout (never applied automatically): 25% off the Vault price.
+  // One use per email address, as with every code (coupon_redemptions).
+  VAULT25: {
+    items: ['80s-jumpsuit'], off: 4688, // 25% of $187.50
+  },
 };
 // An unpaid hold on a code use is released after this long (a checkout that never finished).
 const HOLD_MINUTES = 15;
@@ -117,14 +124,42 @@ async function codeUses(code) {
   return rows[0].n;
 }
 
-// Pieces that are sold out because their code has reached its limit.
+// Pieces that are sold out because their code has reached its limit, or every size has run out.
 async function soldOut() {
   const out = {};
   for (const [code, c] of Object.entries(CODES)) {
     if (!c.limit) continue;
     if ((await codeUses(code)) >= c.limit) c.items.forEach((id) => { out[id] = c.soldOut; });
   }
+  const sizes = await soldSizes();
+  for (const [id, gone] of Object.entries(sizes)) {
+    if (CATALOG[id].sizes.every((z) => gone.includes(z))) out[id] = CATALOG[id].name + ' is sold out.';
+  }
   return out;
+}
+
+// Sizes that have run out, for pieces with tracked stock: { id: ['S', ...] }. Counts never leave the server.
+// A size with no inventory row counts as sold out.
+async function soldSizes() {
+  const ids = Object.keys(CATALOG).filter((id) => CATALOG[id].stock);
+  if (!ids.length) return {};
+  const { rows } = await db().pool.query('SELECT item_id, size FROM inventory WHERE item_id = ANY($1) AND qty > 0', [ids]);
+  const out = {};
+  for (const id of ids) {
+    const gone = CATALOG[id].sizes.filter((z) => !rows.some((r) => r.item_id === id && r.size === z));
+    if (gone.length) out[id] = gone;
+  }
+  return out;
+}
+
+// Takes one unit of a size before the card is charged. False when the size has run out.
+async function takeStock(id, size) {
+  const rows = await db().sql`
+    UPDATE inventory SET qty = qty - 1 WHERE item_id = ${id} AND size = ${size} AND qty > 0 RETURNING item_id`;
+  return rows.length > 0;
+}
+async function returnStock(id, size) {
+  await db().sql`UPDATE inventory SET qty = qty + 1 WHERE item_id = ${id} AND size = ${size}`;
 }
 
 function checkCode(id, raw) {
@@ -215,7 +250,7 @@ async function locationId(cfg) {
 function publicCatalog() {
   const out = {};
   for (const [id, item] of Object.entries(CATALOG)) {
-    out[id] = { name: item.name, amount: item.amount, sizes: item.sizes, colors: item.colors || [] };
+    out[id] = { name: item.name, amount: item.amount, sizes: item.sizes, colors: item.colors || [], usOnly: !!item.usOnly };
   }
   return out;
 }
@@ -255,10 +290,10 @@ export default async (req) => {
     if (!cfg.applicationId || !cfg.accessToken) return Response.json({ ready: false });
     const loc = await locationId(cfg);
     if (!loc) return Response.json({ ready: false });
-    let sold = {};
-    try { sold = await soldOut(); } catch (e) { console.error('Sold-out check failed', e && e.message); }
+    let sold = {}, sizes = {};
+    try { sold = await soldOut(); sizes = await soldSizes(); } catch (e) { console.error('Sold-out check failed', e && e.message); }
     return Response.json(
-      { ready: true, applicationId: cfg.applicationId, locationId: loc, environment: cfg.environment, catalog: publicCatalog(), soldOut: sold },
+      { ready: true, applicationId: cfg.applicationId, locationId: loc, environment: cfg.environment, catalog: publicCatalog(), soldOut: sold, soldSizes: sizes },
       { headers: { 'Cache-Control': 'no-store' } },
     );
   }
@@ -282,7 +317,7 @@ export default async (req) => {
 
   // Pieces whose code has reached its limit can't be bought; a code must be valid for the piece.
   let sold = {};
-  if (Object.values(CODES).some((c) => c.limit && c.items.includes(id))) try { sold = await soldOut(); } catch (e) {
+  if (item.stock || Object.values(CODES).some((c) => c.limit && c.items.includes(id))) try { sold = await soldOut(); } catch (e) {
     console.error('Sold-out check failed', e && e.message);
     return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
   }
@@ -311,6 +346,9 @@ export default async (req) => {
     address1: str(b.address1, 120), address2: str(b.address2, 120), city: str(b.city, 60), state: str(b.state, 60),
     postal: str(b.postal, 20), country: /^[A-Z]{2}$/.test(str(b.country, 2).toUpperCase()) ? str(b.country, 2).toUpperCase() : 'US',
   };
+  if (item.usOnly && buyer.country !== 'US') {
+    return Response.json({ ok: false, error: 'This piece ships within the United States only.' }, { status: 400 });
+  }
   if (!buyer.givenName || !buyer.familyName || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(buyer.email) || !buyer.address1 || !buyer.city || !buyer.postal) {
     return Response.json({ ok: false, error: 'Please complete your name, email and shipping address.' }, { status: 400 });
   }
@@ -341,6 +379,24 @@ export default async (req) => {
     }
     if (hold.error) return Response.json({ ok: false, soldOut: !!hold.soldOut, error: hold.error }, { status: 409 });
   }
+  const releaseHold = () => hold
+    ? db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {})
+    : Promise.resolve();
+  // Pieces with tracked stock: take one unit of the size now; it's put back if the payment fails.
+  let took = false;
+  if (item.stock) {
+    try { took = await takeStock(id, size); } catch (e) {
+      console.error('Stock check failed', e && e.message);
+      await releaseHold();
+      return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
+    }
+    if (!took) {
+      await releaseHold();
+      let all = false;
+      try { all = !!(await soldOut())[id]; } catch {}
+      return Response.json({ ok: false, soldOut: all, soldSize: size, error: 'Size ' + size + ' is sold out.' }, { status: 409 });
+    }
+  }
   const discount = promo ? promo.c.off : 0;
   const amount = item.amount - discount;
 
@@ -366,7 +422,8 @@ export default async (req) => {
   const r = await square(cfg, '/v2/payments', { method: 'POST', body: JSON.stringify(payment) });
   if (!r.ok || !r.data.payment) {
     console.error('Square payment failed', r.status, JSON.stringify((r.data.errors || []).map((e) => ({ code: e.code, category: e.category }))));
-    if (hold) await db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {});
+    await releaseHold();
+    if (took) await returnStock(id, size).catch((e) => console.error('Stock not returned', id, size, e && e.message));
     return Response.json({ ok: false, error: shopperMessage(r.data.errors) }, { status: 402 });
   }
 
@@ -386,6 +443,7 @@ export default async (req) => {
     amount,
     code: promo ? promo.code : '',
     discount,
+    freeShipping: !!(promo && promo.c.freeShipping),
   });
 };
 

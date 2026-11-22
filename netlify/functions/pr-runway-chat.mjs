@@ -205,6 +205,7 @@ ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum
 - NL Western: more pieces arriving soon — invite them to join the list at the bottom of any page.
 
 THE VAULT — classics from the house archive, limited quantities; once a piece is gone it stays in the archive. Send Vault shoppers to trunkshowusa.com.
+- The '80s Jumpsuit (new to the Vault, from the Fall/Winter 2019 collection), Vault price $187.50 (originally $375), sizes S, M and L, limited availability, ships within the US only: an archive jumpsuit with '80s energy and Southern luxury. Shown styled with a belt, which is sold separately; beautiful with any gold pairing. Shoppers can enter code VAULT25 at checkout for an extra 25% off.
 - Velvet & Brocade Elephant Collar Suit, Black Friday sale $395 (regularly $795): in-house corduroy brocade blazer with an oversized deep blue-green velvet collar — the elephant ear — three buttons and flap pockets, with the velvet trouser, wide and straight with a brocade side stripe. Sold as a set.
 - Emerald Moto Set, Black Friday sale $295 (regularly $595): vegan leather biker jacket with a velvet yoke and stand collar, ring-pull zip and zip pockets, with a vegan leather mini skirt with patch pockets. Sold as a set.
 - Sarah's Dress, Black Friday sale $295 (regularly $595): midi in in-house corduroy brocade with a deep blue-green velvet yoke and center panel, stand collar, long brocade sleeves with buttoned cuffs.
