@@ -94,6 +94,12 @@ const CATALOG = {
   'live-21':               { name: 'NL Live Preorder — Look 21',                        amount:  35500, sizes: SMLXL, closes: PREORDER_CLOSE },
 };
 
+// The Vault — the pieces VAULT25 applies to.
+const VAULT = ['elephant-ear-suit', 'biker-set', 'sarahs-dress', 'pearl-satin-set', 'cowl-neck-dress', 'curtain-dress',
+  'audrey', 'funkadelic', 'n-sweater-vest', 'apron-dress', 'fingerprint-dress', 'polka-dot-romper-set'];
+
+// off: cents taken off the item, or pct: percent off the sale price, rounded down to end in 5 or 0.
+// One code per order, so codes never combine.
 // off: cents taken off the item. expires: the code stops working at this moment (end of Nov 23, US Central).
 // limit: total uses; once reached, the listed pieces are sold out. perCustomer: uses per email address.
 const CODES = {
@@ -102,7 +108,18 @@ const CODES = {
     expires: Date.parse('2026-11-24T06:00:00Z'), // 11:59 PM CST Nov 23 is the last valid minute
     soldOut: 'The Holiday Sport Package is sold out.',
   },
+  // Black Friday: an extra 25% off Vault pieces only. No use limit.
+  VAULT25: {
+    items: VAULT, pct: 25,
+    expires: Date.parse('2026-12-01T06:00:00Z'), // 11:59 PM CST Nov 30 is the last valid minute
+  },
 };
+
+// Cents a code takes off an item: a fixed amount, or a percent with the new price rounded down to end in 5 or 0.
+function discountFor(c, item) {
+  if (c.pct) return item.amount - Math.floor((item.amount * (100 - c.pct)) / 100 / 500) * 500;
+  return c.off || 0;
+}
 // An unpaid hold on a code use is released after this long (a checkout that never finished).
 const HOLD_MINUTES = 15;
 
@@ -292,8 +309,8 @@ export default async (req) => {
 
   if (url.pathname.endsWith('/code')) {
     return Response.json({
-      ok: true, code: promo ? promo.code : '', discount: promo ? promo.c.off : 0,
-      amount: item.amount - (promo ? promo.c.off : 0), freeShipping: !!(promo && promo.c.freeShipping),
+      ok: true, code: promo ? promo.code : '', discount: promo ? discountFor(promo.c, item) : 0,
+      amount: item.amount - (promo ? discountFor(promo.c, item) : 0), freeShipping: !!(promo && promo.c.freeShipping),
     });
   }
   const size = str(body.size, 20);
@@ -334,14 +351,14 @@ export default async (req) => {
   };
   // Hold one use of the code for this customer before charging; it's released if the payment fails.
   let hold = null;
-  if (promo) {
+  if (promo && (promo.c.limit || promo.c.perCustomer)) {
     try { hold = await holdCode(promo.code, promo.c, buyer.email.toLowerCase(), idempotencyKey, id); } catch (e) {
       console.error('Code hold failed', e && e.message);
       return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
     }
     if (hold.error) return Response.json({ ok: false, soldOut: !!hold.soldOut, error: hold.error }, { status: 409 });
   }
-  const discount = promo ? promo.c.off : 0;
+  const discount = promo ? discountFor(promo.c, item) : 0;
   const amount = item.amount - discount;
 
   const note = [item.name, 'Size: ' + size, color ? 'Color: ' + color : '',
@@ -386,6 +403,7 @@ export default async (req) => {
     amount,
     code: promo ? promo.code : '',
     discount,
+    freeShipping: !!(promo && promo.c.freeShipping),
   });
 };
 
