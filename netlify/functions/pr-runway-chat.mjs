@@ -205,6 +205,7 @@ ACCESSORIES (Accessories page, one size). The sunglasses arrive in Negris LeBrum
 - NL Western: more pieces arriving soon — invite them to join the list at the bottom of any page.
 
 THE VAULT — classics from the house archive, limited quantities; once a piece is gone it stays in the archive. Send Vault shoppers to trunkshowusa.com.
+- The Oscar Gold Jumpsuit, From the Vault, Fall/Winter 2019, Vault sale $187.50 (regularly $375), sizes S, M and L, limited availability — once it's gone, it's gone. '80s energy, Southern luxury: an archive jumpsuit, shown styled with a belt (belt sold separately), beautiful with any gold pairing. Code VAULT25 takes an extra 25% off at checkout. Ships within the US only. Never state how many are left.
 - Velvet & Brocade Elephant Collar Suit, Black Friday sale $395 (regularly $795): in-house corduroy brocade blazer with an oversized deep blue-green velvet collar — the elephant ear — three buttons and flap pockets, with the velvet trouser, wide and straight with a brocade side stripe. Sold as a set.
 - Emerald Moto Set, Black Friday sale $295 (regularly $595): vegan leather biker jacket with a velvet yoke and stand collar, ring-pull zip and zip pockets, with a vegan leather mini skirt with patch pockets. Sold as a set.
 - Sarah's Dress, Black Friday sale $295 (regularly $595): midi in in-house corduroy brocade with a deep blue-green velvet yoke and center panel, stand collar, long brocade sleeves with buttoned cuffs.

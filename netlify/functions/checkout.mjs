@@ -47,6 +47,8 @@ const CATALOG = {
   'classic-vest':          { name: 'The Classic Vest',                       amount:   7800, sizes: ['M', 'L'] },
   'logo-sweater':          { name: 'The Logo Sweater',                       amount:  18500, sizes: ['M', 'L', 'XL'] },
   // The Vault
+  // stock: per-size inventory is kept in Netlify Database (inventory table); usOnly: ships within the US only.
+  'oscar-gold-jumpsuit':   { name: 'The Oscar Gold Jumpsuit',                amount:  18750, sizes: ['S', 'M', 'L'], stock: true, usOnly: true },
   'elephant-ear-suit':     { name: 'Velvet & Brocade Elephant Collar Suit',  amount:  39500, sizes: SMLXL },
   'biker-set':             { name: 'Emerald Moto Set',                       amount:  29500, sizes: SMLXL },
   'sarahs-dress':          { name: "Sarah's Dress",                          amount:  29500, sizes: SMLXL },
@@ -95,13 +97,13 @@ const CATALOG = {
 };
 
 // The Vault — the pieces VAULT25 applies to.
-const VAULT = ['elephant-ear-suit', 'biker-set', 'sarahs-dress', 'pearl-satin-set', 'cowl-neck-dress', 'curtain-dress',
+const VAULT = ['oscar-gold-jumpsuit', 'elephant-ear-suit', 'biker-set', 'sarahs-dress', 'pearl-satin-set', 'cowl-neck-dress', 'curtain-dress',
   'audrey', 'funkadelic', 'n-sweater-vest', 'apron-dress', 'fingerprint-dress', 'polka-dot-romper-set'];
 
 // off: cents taken off the item, or pct: percent off the sale price, rounded down to end in 5 or 0.
-// One code per order, so codes never combine.
-// off: cents taken off the item. expires: the code stops working at this moment (end of Nov 23, US Central).
-// limit: total uses; once reached, the listed pieces are sold out. perCustomer: uses per email address.
+// One code per order, so codes never combine. expires (optional): the code stops working at this moment.
+// limit (optional): total uses; once reached, the listed pieces are sold out. perCustomer: uses per email address.
+// Codes with a limit or perCustomer are recorded in coupon_redemptions; codes without them are not.
 const CODES = {
   SPORT: {
     items: ['sport-package'], off: 37500, freeShipping: true, limit: 6, perCustomer: 1,
@@ -120,6 +122,8 @@ function discountFor(c, item) {
   if (c.pct) return item.amount - Math.floor((item.amount * (100 - c.pct)) / 100 / 500) * 500;
   return c.off || 0;
 }
+const tracked = (c) => !!(c.limit || c.perCustomer);
+
 // An unpaid hold on a code use is released after this long (a checkout that never finished).
 const HOLD_MINUTES = 15;
 
@@ -148,7 +152,7 @@ function checkCode(id, raw) {
   const code = str(raw, 30).toUpperCase();
   const c = Object.prototype.hasOwnProperty.call(CODES, code) ? CODES[code] : null;
   if (!c) return { error: 'That code isn’t valid.' };
-  if (Date.now() >= c.expires) return { error: 'Code ' + code + ' has expired.' };
+  if (c.expires && Date.now() >= c.expires) return { error: 'Code ' + code + ' has expired.' };
   if (!c.items.includes(id)) return { error: 'Code ' + code + ' doesn’t apply to this piece.' };
   return { code, c };
 }
@@ -172,7 +176,7 @@ async function holdCode(code, c, email, key, itemId) {
     const used = await client.query(
       `SELECT count(*)::int AS n FROM coupon_redemptions
        WHERE code = $1 AND (status = 'paid' OR created_at > now() - make_interval(mins => $2))`, [code, HOLD_MINUTES]);
-    if (used.rows[0].n >= c.limit) { await client.query('ROLLBACK'); return { error: c.soldOut, soldOut: true }; }
+    if (c.limit && used.rows[0].n >= c.limit) { await client.query('ROLLBACK'); return { error: c.soldOut, soldOut: true }; }
     const ins = await client.query(
       `INSERT INTO coupon_redemptions (code, email, item_id, idempotency_key) VALUES ($1, $2, $3, $4) RETURNING id`,
       [code, email, itemId, key]);
@@ -181,6 +185,58 @@ async function holdCode(code, c, email, key, itemId) {
   } catch (e) {
     await client.query('ROLLBACK').catch(() => {});
     throw e;
+  } finally {
+    client.release();
+  }
+}
+
+// Sizes with no stock left, per piece: { id: ['M'] }. Counts are never sent to the page.
+async function soldOutSizes() {
+  if (!Object.values(CATALOG).some((i) => i.stock)) return {};
+  const rows = await db().sql`SELECT item_id, size FROM inventory WHERE stock <= 0`;
+  const out = {};
+  rows.forEach((r) => { (out[r.item_id] = out[r.item_id] || []).push(r.size); });
+  return out;
+}
+
+// Takes one unit of this size off stock for the checkout attempt (a retry with the same key reuses it).
+async function holdStock(itemId, size, key) {
+  const client = await db().pool.connect();
+  try {
+    await client.query('BEGIN');
+    const mine = await client.query('SELECT item_id, size FROM inventory_holds WHERE idempotency_key = $1', [key]);
+    if (mine.rows[0]) {
+      await client.query('COMMIT');
+      return mine.rows[0].item_id === itemId && mine.rows[0].size === size ? { ok: true } : { error: 'Something went wrong. Please try again.' };
+    }
+    const took = await client.query(
+      'UPDATE inventory SET stock = stock - 1 WHERE item_id = $1 AND size = $2 AND stock > 0 RETURNING stock', [itemId, size]);
+    if (!took.rows[0]) { await client.query('ROLLBACK'); return { soldOut: true }; }
+    await client.query('INSERT INTO inventory_holds (idempotency_key, item_id, size) VALUES ($1, $2, $3)', [key, itemId, size]);
+    await client.query('COMMIT');
+    return { ok: true };
+  } catch (e) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+// A failed payment puts its unit back.
+async function releaseStock(key) {
+  const client = await db().pool.connect();
+  try {
+    await client.query('BEGIN');
+    const del = await client.query(
+      `DELETE FROM inventory_holds WHERE idempotency_key = $1 AND status = 'pending' RETURNING item_id, size`, [key]);
+    if (del.rows[0]) {
+      await client.query('UPDATE inventory SET stock = stock + 1 WHERE item_id = $1 AND size = $2', [del.rows[0].item_id, del.rows[0].size]);
+    }
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK').catch(() => {});
+    console.error('Stock release failed', e && e.message);
   } finally {
     client.release();
   }
@@ -232,7 +288,7 @@ async function locationId(cfg) {
 function publicCatalog() {
   const out = {};
   for (const [id, item] of Object.entries(CATALOG)) {
-    out[id] = { name: item.name, amount: item.amount, sizes: item.sizes, colors: item.colors || [] };
+    out[id] = { name: item.name, amount: item.amount, sizes: item.sizes, colors: item.colors || [], usOnly: !!item.usOnly };
   }
   return out;
 }
@@ -274,8 +330,10 @@ export default async (req) => {
     if (!loc) return Response.json({ ready: false });
     let sold = {};
     try { sold = await soldOut(); } catch (e) { console.error('Sold-out check failed', e && e.message); }
+    let soldSizes = {};
+    try { soldSizes = await soldOutSizes(); } catch (e) { console.error('Stock check failed', e && e.message); }
     return Response.json(
-      { ready: true, applicationId: cfg.applicationId, locationId: loc, environment: cfg.environment, catalog: publicCatalog(), soldOut: sold },
+      { ready: true, applicationId: cfg.applicationId, locationId: loc, environment: cfg.environment, catalog: publicCatalog(), soldOut: sold, soldOutSizes: soldSizes },
       { headers: { 'Cache-Control': 'no-store' } },
     );
   }
@@ -328,6 +386,9 @@ export default async (req) => {
     address1: str(b.address1, 120), address2: str(b.address2, 120), city: str(b.city, 60), state: str(b.state, 60),
     postal: str(b.postal, 20), country: /^[A-Z]{2}$/.test(str(b.country, 2).toUpperCase()) ? str(b.country, 2).toUpperCase() : 'US',
   };
+  if (item.usOnly && buyer.country !== 'US') {
+    return Response.json({ ok: false, error: 'This piece ships within the United States only.' }, { status: 400 });
+  }
   if (!buyer.givenName || !buyer.familyName || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(buyer.email) || !buyer.address1 || !buyer.city || !buyer.postal) {
     return Response.json({ ok: false, error: 'Please complete your name, email and shipping address.' }, { status: 400 });
   }
@@ -351,18 +412,33 @@ export default async (req) => {
   };
   // Hold one use of the code for this customer before charging; it's released if the payment fails.
   let hold = null;
-  if (promo && (promo.c.limit || promo.c.perCustomer)) {
+  if (promo && tracked(promo.c)) {
     try { hold = await holdCode(promo.code, promo.c, buyer.email.toLowerCase(), idempotencyKey, id); } catch (e) {
       console.error('Code hold failed', e && e.message);
       return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
     }
     if (hold.error) return Response.json({ ok: false, soldOut: !!hold.soldOut, error: hold.error }, { status: 409 });
   }
+  const releaseCode = () => hold ? db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {}) : null;
+  // Limited pieces: one unit of the size is held before charging and put back if the payment fails.
+  if (item.stock) {
+    let st;
+    try { st = await holdStock(id, size, idempotencyKey); } catch (e) {
+      console.error('Stock hold failed', e && e.message);
+      await releaseCode();
+      return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
+    }
+    if (!st.ok) {
+      await releaseCode();
+      if (st.soldOut) return Response.json({ ok: false, sizeSoldOut: size, error: 'Size ' + size + ' is sold out.' }, { status: 409 });
+      return Response.json({ ok: false, error: st.error }, { status: 409 });
+    }
+  }
   const discount = promo ? discountFor(promo.c, item) : 0;
   const amount = item.amount - discount;
 
   const note = [item.name, 'Size: ' + size, color ? 'Color: ' + color : '',
-    promo ? 'Code ' + promo.code + ' (−' + '$' + (discount / 100) + ')' : '', promo && promo.c.freeShipping ? 'Free shipping' : '',
+    promo ? 'Code ' + promo.code + ' (−' + '$' + (discount / 100).toFixed(2) + ')' : '', promo && promo.c.freeShipping ? 'Free shipping' : '',
     buyer.phone ? 'Phone: ' + buyer.phone : '']
     .filter(Boolean).join(' · ').slice(0, 500);
 
@@ -383,7 +459,8 @@ export default async (req) => {
   const r = await square(cfg, '/v2/payments', { method: 'POST', body: JSON.stringify(payment) });
   if (!r.ok || !r.data.payment) {
     console.error('Square payment failed', r.status, JSON.stringify((r.data.errors || []).map((e) => ({ code: e.code, category: e.category }))));
-    if (hold) await db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {});
+    await releaseCode();
+    if (item.stock) await releaseStock(idempotencyKey);
     return Response.json({ ok: false, error: shopperMessage(r.data.errors) }, { status: 402 });
   }
 
@@ -391,6 +468,10 @@ export default async (req) => {
   if (hold) {
     await db().sql`UPDATE coupon_redemptions SET status = 'paid', payment_id = ${p.id} WHERE id = ${hold.id}`
       .catch((e) => console.error('Code use not recorded', p.id, e && e.message));
+  }
+  if (item.stock) {
+    await db().sql`UPDATE inventory_holds SET status = 'paid', payment_id = ${p.id} WHERE idempotency_key = ${idempotencyKey}`
+      .catch((e) => console.error('Stock sale not recorded', p.id, e && e.message));
   }
   return Response.json({
     ok: true,
