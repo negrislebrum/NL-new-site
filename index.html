@@ -440,6 +440,7 @@
   .co-or{display:flex;align-items:center;gap:14px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--soft);margin:14px 0}
   .co-or::before,.co-or::after{content:"";flex:1;border-top:1px solid var(--line)}
   #coCard{min-height:90px}
+  .co-note{font-size:12px;letter-spacing:.03em;color:var(--soft);margin-top:8px}
   .co-err{color:var(--oxblood);font-size:13px;line-height:1.6;min-height:18px;margin:2px 0 14px}
   .co .btn-dark{width:100%;margin-top:0}
   .co .btn-dark:disabled{opacity:.6;cursor:default}
@@ -550,6 +551,19 @@
     .lv-buy{padding:11px 8px}
   }
   @media(min-width:861px){ .lv-stream-wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px} }
+  /* ---------- email signup popup ---------- */
+  .nlp{position:fixed;inset:0;z-index:204;background:rgba(10,8,6,.5);display:none;align-items:center;justify-content:center;padding:20px}
+  .nlp.open{display:flex}
+  .nlp [hidden]{display:none!important}
+  .nlp-panel{position:relative;width:100%;max-width:460px;background:var(--paper);color:var(--ink);padding:48px 40px 40px;text-align:center}
+  .nlp-panel h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,3vw,34px);line-height:1.15;margin:12px 0 12px}
+  .nlp-panel p{color:var(--soft);font-size:14px;line-height:1.7;margin:0 auto 26px;max-width:340px}
+  .nlp .field{display:flex;border-bottom:1px solid var(--ink)}
+  .nlp .field input{font-size:16px}
+  .nlp-msg{font-size:13px;color:var(--oxblood);min-height:18px;margin-top:12px}
+  .nlp-done p{color:var(--ink);font-size:15px}
+  .nlp-done b{letter-spacing:.12em}
+  .nlp-no{background:none;border:0;color:var(--soft);font-family:var(--ui);font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;margin-top:22px;padding:6px}
 </style>
 </head>
 <body>
@@ -569,7 +583,7 @@
 </form>
 <form name="newsletter" data-netlify="true" netlify-honeypot="bot-field" hidden>
   <input type="hidden" name="form-name" value="newsletter" />
-  <input name="email" type="email" /><input name="bot-field" />
+  <input name="email" type="email" /><input name="date" /><input name="page" /><input name="bot-field" />
 </form>
 <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
   <input type="hidden" name="form-name" value="contact" />
@@ -743,6 +757,7 @@
         <div class="co-disc" id="coDisc" hidden><span id="coDiscName"></span><b id="coDiscAmt"></b></div>
         <p class="co-ship" id="coShip" hidden></p>
         <form id="coForm" novalidate>
+          <div class="form-row"><label for="coEmail">Email</label><input id="coEmail" type="email" autocomplete="email"><p class="co-note">We'll send your receipt here.</p></div>
           <div id="coCodeWrap" hidden>
             <div class="form-row"><label for="coCode">Promo code</label><div class="co-code-row"><input id="coCode" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30"><button type="button" id="coCodeBtn">Apply</button></div></div>
             <div class="co-code-msg" id="coCodeMsg" aria-live="polite"></div>
@@ -751,10 +766,7 @@
             <div class="form-row"><label for="coFirst">First name</label><input id="coFirst" autocomplete="given-name"></div>
             <div class="form-row"><label for="coLast">Last name</label><input id="coLast" autocomplete="family-name"></div>
           </div>
-          <div class="co-two">
-            <div class="form-row"><label for="coEmail">Email</label><input id="coEmail" type="email" autocomplete="email"></div>
-            <div class="form-row"><label for="coPhone">Phone (optional)</label><input id="coPhone" type="tel" autocomplete="tel"></div>
-          </div>
+          <div class="form-row"><label for="coPhone">Phone (optional)</label><input id="coPhone" type="tel" autocomplete="tel"></div>
           <div class="form-row"><label for="coCountry">Country</label><select id="coCountry" autocomplete="country"><option value="US">United States</option><option value="CA">Canada</option><option value="GB">United Kingdom</option><option value="FR">France</option><option value="IT">Italy</option><option value="DE">Germany</option><option value="ES">Spain</option><option value="NL">Netherlands</option><option value="CH">Switzerland</option><option value="AE">United Arab Emirates</option><option value="AU">Australia</option><option value="JP">Japan</option><option value="MX">Mexico</option><option value="BR">Brazil</option><option value="NG">Nigeria</option><option value="ZA">South Africa</option><option value="JM">Jamaica</option><option value="BS">Bahamas</option></select></div>
           <div class="form-row"><label for="coAddr1">Shipping address</label><input id="coAddr1" autocomplete="address-line1"></div>
           <div class="form-row"><label for="coAddr2">Apt, suite (optional)</label><input id="coAddr2" autocomplete="address-line2"></div>
@@ -790,6 +802,28 @@
         <p id="cdText"></p>
         <p id="cdReceiptWrap"><a class="ulink" id="cdReceipt" href="#" target="_blank" rel="noopener">View your receipt</a></p>
         <button type="button" class="btn-dark" id="cdDone">Continue shopping</button>
+      </div>
+    </div>
+  </div>
+  <div class="nlp" id="nlp" role="dialog" aria-modal="true" aria-labelledby="nlpTitle">
+    <div class="nlp-panel">
+      <button class="vp-x" id="nlpX" type="button" aria-label="Close">&times;</button>
+      <div id="nlpBody">
+        <span class="eyebrow" style="color:var(--brass)">The List</span>
+        <h2 id="nlpTitle">Join the Negris LeBrum list.</h2>
+        <p>First access to new drops, private sales and events.</p>
+        <form class="field" id="nlpForm" novalidate>
+          <input type="email" id="nlpEmail" placeholder="Email address" aria-label="Email address" autocomplete="email" required />
+          <button type="submit" id="nlpJoin">Join</button>
+        </form>
+        <div class="nlp-msg" id="nlpMsg" aria-live="polite"></div>
+        <button type="button" class="nlp-no" id="nlpNo">No thanks</button>
+      </div>
+      <div class="nlp-done" id="nlpDone" hidden>
+        <span class="eyebrow" style="color:var(--brass)">Welcome</span>
+        <h2>You're in.</h2>
+        <p>Shop The Vault with an extra 25% off using code <b>VAULT25</b>.</p>
+        <a class="btn-dark" data-go="vault" href="/vault" id="nlpVault" style="display:inline-block;text-decoration:none">Shop The Vault</a>
       </div>
     </div>
   </div>
@@ -1153,6 +1187,21 @@
     const newKey=()=>(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,14);
     const err=m=>{ errEl.textContent=m||''; };
     const val=id=>$(id).value.trim();
+    // Abandoned cart: once an email is entered, the cart is saved on the server (netlify/functions/checkout.mjs).
+    // One cart id per browser until an order is paid; the reminder email links back with ?cart=<id>.
+    let cartTimer=null, cartSaved='';
+    function cartId(){ let id=''; try{ id=localStorage.getItem('nl_cart')||''; if(!id){ id=newKey(); localStorage.setItem('nl_cart',id); } }catch(e){ id=window._nlCart||(window._nlCart=newKey()); } return id; }
+    function saveCart(){
+      clearTimeout(cartTimer);
+      cartTimer=setTimeout(()=>{
+        const email=val('coEmail'); if(!order||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
+        const p=PM[order.id], data={ cartId:cartId(), email, id:order.id, size:order.size, color:order.color, code:order.code, image:p&&p.imgs?p.imgs[0]:'' };
+        const sig=JSON.stringify(data); if(sig===cartSaved) return; cartSaved=sig;
+        fetch('/api/checkout/cart',{ method:'POST', headers:{'Content-Type':'application/json'}, body:sig }).catch(()=>{ cartSaved=''; });
+      },600);
+    }
+    $('coEmail').addEventListener('input',saveCart);
+    $('coEmail').addEventListener('change',saveCart);
     function loadSquare(){
       if(loading) return loading;
       loading=new Promise((ok,fail)=>{
@@ -1198,11 +1247,12 @@
     }
     async function charge(token,b){
       const res=await fetch('/api/checkout',{ method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({ id:order.id, size:order.size, color:order.color, code:order.code, sourceId:token, idempotencyKey:order.key, buyer:b }) });
+        body:JSON.stringify({ id:order.id, size:order.size, color:order.color, code:order.code, sourceId:token, idempotencyKey:order.key, buyer:b, cartId:cartId() }) });
       const d=await res.json().catch(()=>({}));
       if(d.soldOut&&d.error){ SOLD[order.id]=d.error; renderLists(); }
       if(d.sizeSoldOut){ SOLDSZ[order.id]=(SOLDSZ[order.id]||[]).concat(d.sizeSoldOut); if(window.onCheckoutReady) window.onCheckoutReady(); }
       if(!res.ok||!d.ok){ order.key=newKey(); throw { shopper:d.error||'We couldn’t complete the payment. Please try again.' }; }
+      clearTimeout(cartTimer); try{ localStorage.removeItem('nl_cart'); }catch(e){}
       $('cdItem').textContent=d.item;
       $('cdSize').textContent=d.size;
       $('cdColor').textContent=d.color; $('cdColorRow').hidden=!d.color;
@@ -1230,7 +1280,7 @@
     function showTotal(){
       const full=checkoutItem(order.id).amount;
       $('coPrice').innerHTML=order.amount<full?'<s>'+money(full)+'</s>'+money(order.amount):money(order.amount);
-      pay.textContent='Pay '+money(order.amount);
+      pay.textContent='Pay '+money(order.amount); saveCart();
       $('coDisc').hidden=!order.code; $('coDiscName').textContent=order.code?'Code '+order.code:''; $('coDiscAmt').textContent=order.code?'−'+money(full-order.amount):'';
     }
     async function applyCode(){
@@ -1280,7 +1330,8 @@
       pay.textContent='Pay '+money(it.amount); pay.disabled=false;
       $('coBody').style.display=''; $('coDone').classList.remove('show'); err('');
       co.classList.add('open'); co.scrollTop=0;
-      setTimeout(()=>$('coFirst').focus({preventScroll:true}),50);
+      setTimeout(()=>$('coEmail').focus({preventScroll:true}),50);
+      saveCart();
       const o=order;
       loadSquare().then(()=>setupWallets(o)).catch(()=>err('The payment form didn’t load. Please check your connection and try again.'));
     };
@@ -1291,6 +1342,23 @@
     $('cdDone').addEventListener('click',()=>{ close(); $('vpX').click(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&co.classList.contains('open')){ e.stopImmediatePropagation(); close(); } },true);
     window.addEventListener('popstate',()=>{ busy||co.classList.remove('open'); });
+    // "Complete your order" link from the reminder email: /?cart=<id> reopens checkout with the saved piece.
+    const restoreId=new URLSearchParams(location.search).get('cart');
+    if(restoreId&&/^[A-Za-z0-9-]{8,45}$/.test(restoreId)){
+      history.replaceState(history.state,'',location.pathname+location.hash);
+      fetch('/api/checkout/cart?id='+encodeURIComponent(restoreId)).then(r=>r.json()).then(c=>{
+        if(!c||!c.ok||!c.items||!c.items.length) return;
+        const it=c.items[0];
+        const go=()=>{
+          if(!checkoutItem(it.id)) return;
+          try{ localStorage.setItem('nl_cart',restoreId); }catch(e){ window._nlCart=restoreId; }
+          const p=PM[it.id]||{ id:it.id, cat:'live', crumb:'NL Live · Exclusive Preorder', ship:'Made to order · Delivery January–February 2027 · Preorders close December 15, 2026.' };
+          openCheckout(p,it.size,it.color); $('coEmail').value=c.email||'';
+          if(c.code&&!$('coCodeWrap').hidden){ $('coCode').value=c.code; applyCode(); }
+        };
+        let tries=0; (function wait(){ if(CHECKOUT) return go(); if(++tries<60) setTimeout(wait,250); })();
+      }).catch(()=>{});
+    }
   })();
 
   /* ---------- product panel ---------- */
@@ -1457,6 +1525,49 @@
     document.getElementById('acctBtn').addEventListener('click',()=>go('contact'));
     document.getElementById('wishBtn').addEventListener('click',()=>go('wishlist'));
     document.getElementById('bagBtn').addEventListener('click',()=>go('bag'));
+  })();
+
+  /* ---------- email signup popup ----------
+     Once per visitor: after 10 seconds or halfway down the page, whichever comes first. Never over checkout.
+     Closing it hides it for 14 days; joining hides it for good. Signups go to the "newsletter" Netlify form. */
+  (function(){
+    const $=id=>document.getElementById(id), pop=$('nlp'), co=$('co'), KEY='nl_signup', DAYS=14;
+    if(!pop) return;
+    const get=()=>{ try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ return null; } };
+    const put=v=>{ try{ localStorage.setItem(KEY,JSON.stringify(v)); }catch(e){} };
+    const s=get();
+    if(s&&(s.joined||(s.until&&Date.now()<s.until))) return;
+    if(new URLSearchParams(location.search).has('cart')) return; // arriving to finish an order
+    let shown=false, timer=null;
+    const onCheckout=()=>co&&co.classList.contains('open');
+    function show(){
+      if(shown) return;
+      if(onCheckout()){ clearTimeout(timer); timer=setTimeout(show,5000); return; } // waits until checkout is closed
+      shown=true; clearTimeout(timer); window.removeEventListener('scroll',onScroll);
+      put({ until:Date.now()+DAYS*864e5 }); // shown once — not again for 14 days unless they join
+      pop.classList.add('open'); setTimeout(()=>$('nlpEmail').focus({preventScroll:true}),50);
+    }
+    function close(){ if(!pop.classList.contains('open')) return; pop.classList.remove('open'); const v=get()||{}; if(!v.joined) put({ until:Date.now()+DAYS*864e5 }); }
+    function onScroll(){ const h=document.documentElement.scrollHeight-innerHeight; if(h>0&&scrollY>=h/2) show(); }
+    timer=setTimeout(show,10000);
+    window.addEventListener('scroll',onScroll,{passive:true});
+    $('nlpX').addEventListener('click',close);
+    $('nlpNo').addEventListener('click',close);
+    $('nlpVault').addEventListener('click',close);
+    pop.addEventListener('click',e=>{ if(e.target===pop) close(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&pop.classList.contains('open')) close(); });
+    // Checkout always wins: opening it closes the popup.
+    if(co) new MutationObserver(()=>{ if(onCheckout()&&pop.classList.contains('open')) close(); }).observe(co,{attributes:true,attributeFilter:['class']});
+    $('nlpForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      const em=$('nlpEmail').value.trim(), m=$('nlpMsg'), b=$('nlpJoin');
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ m.textContent='Please enter a valid email.'; return; }
+      m.textContent=''; b.disabled=true; b.textContent='Joining…';
+      postForm({ "form-name":"newsletter", email:em, date:new Date().toISOString(), page:location.pathname+location.hash })
+        .then(r=>{ if(!r.ok) throw 0; put({ joined:true }); $('nlpBody').hidden=true; $('nlpDone').hidden=false; })
+        .catch(()=>{ m.textContent='That didn’t go through. Please try again.'; })
+        .finally(()=>{ b.disabled=false; b.textContent='Join'; });
+    });
   })();
 
   /* ---------- newsletter ---------- */

@@ -5,6 +5,11 @@
 //   GET  /api/checkout/config → { ready, applicationId, locationId, environment, catalog }
 //   POST /api/checkout/code   → checks a promo code for a piece and returns the new total
 //   POST /api/checkout        → charges the card / wallet token and returns the order
+//   POST /api/checkout/cart   → saves the shopper's cart (email, piece, size, total) for the abandoned-cart reminder
+//   GET  /api/checkout/cart?id=… → returns a saved cart so the reminder's link can restore it
+//
+// ABANDONED CARTS live in Netlify Blobs (store "abandoned-carts", one entry per cart id).
+// netlify/functions/cart-reminders.mjs emails one reminder per unpaid cart; a paid order deletes its cart.
 //
 // KEYS: Netlify → Site configuration → Environment variables
 //   SQUARE_APPLICATION_ID   (from the Square Developer dashboard)
@@ -21,6 +26,7 @@
 // so per-customer and total limits hold across every order.
 
 import { getDatabase } from '@netlify/database';
+import { getStore } from '@netlify/blobs';
 
 const ONE = ['One Size'];
 const SMLXL = ['S', 'M', 'L', 'XL'];
@@ -297,6 +303,38 @@ function str(v, max) {
   return typeof v === 'string' ? v.trim().slice(0, max) : '';
 }
 
+// ---------- abandoned carts ----------
+const carts = () => getStore({ name: 'abandoned-carts', consistency: 'strong' });
+const CART_ID = /^[A-Za-z0-9-]{8,45}$/;
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+// Saves the cart once the shopper has entered an email. Names and prices come from CATALOG, never the page.
+async function saveCart(body) {
+  const cartId = str(body.cartId, 45);
+  const email = str(body.email, 120).toLowerCase();
+  if (!CART_ID.test(cartId) || !EMAIL.test(email)) return Response.json({ ok: false }, { status: 400 });
+  const id = str(body.id, 60);
+  const item = Object.prototype.hasOwnProperty.call(CATALOG, id) ? CATALOG[id] : null;
+  if (!item) return Response.json({ ok: false }, { status: 400 });
+  const size = item.sizes.includes(str(body.size, 20)) ? str(body.size, 20) : '';
+  const color = (item.colors || []).includes(str(body.color, 40)) ? str(body.color, 40) : '';
+  const promo = str(body.code, 30) ? checkCode(id, body.code) : null;
+  const code = promo && !promo.error ? promo.code : '';
+  const price = item.amount - (code ? discountFor(promo.c, item) : 0);
+  const image = /^[a-z0-9-]{1,60}$/.test(str(body.image, 60)) ? str(body.image, 60) : '';
+  const items = [{ id, name: item.name, size, color, price, image }];
+  const store = carts();
+  const prev = await store.get(cartId, { type: 'json' }).catch(() => null);
+  const now = new Date().toISOString();
+  await store.setJSON(cartId, {
+    email, items, code, total: price,
+    createdAt: (prev && prev.createdAt) || now, updatedAt: now,
+    // Once a cart has had its reminder, it never gets another — even if it's saved again.
+    ...(prev && prev.reminderSentAt ? { reminderSentAt: prev.reminderSentAt } : {}),
+  });
+  return Response.json({ ok: true });
+}
+
 // Square error codes → words a shopper can act on.
 function shopperMessage(errors) {
   const code = (errors && errors[0] && errors[0].code) || '';
@@ -322,6 +360,27 @@ function shopperMessage(errors) {
 export default async (req) => {
   const cfg = env();
   const url = new URL(req.url);
+
+  if (url.pathname.endsWith('/cart')) {
+    try {
+      if (req.method === 'GET') {
+        const cartId = str(url.searchParams.get('id') || '', 45);
+        const cart = CART_ID.test(cartId) ? await carts().get(cartId, { type: 'json' }) : null;
+        if (!cart) return Response.json({ ok: false }, { status: 404, headers: { 'Cache-Control': 'no-store' } });
+        return Response.json({ ok: true, email: cart.email, code: cart.code || '',
+          items: cart.items.map((i) => ({ id: i.id, size: i.size, color: i.color, image: i.image })) },
+        { headers: { 'Cache-Control': 'no-store' } });
+      }
+      if (req.method === 'POST') {
+        let b; try { b = await req.json(); } catch { b = null; }
+        return b && typeof b === 'object' ? await saveCart(b) : Response.json({ ok: false }, { status: 400 });
+      }
+    } catch (e) {
+      console.error('Cart save/load failed', e && e.message);
+      return Response.json({ ok: false }, { status: 500 });
+    }
+    return Response.json({ error: 'Method not allowed' }, { status: 405 });
+  }
 
   if (req.method === 'GET') {
     if (!url.pathname.endsWith('/config')) return Response.json({ error: 'Not found' }, { status: 404 });
@@ -473,6 +532,11 @@ export default async (req) => {
     await db().sql`UPDATE inventory_holds SET status = 'paid', payment_id = ${p.id} WHERE idempotency_key = ${idempotencyKey}`
       .catch((e) => console.error('Stock sale not recorded', p.id, e && e.message));
   }
+  // The order is paid, so its saved cart is deleted and no reminder goes out.
+  const cartId = str(body.cartId, 45);
+  if (CART_ID.test(cartId)) {
+    await carts().delete(cartId).catch((e) => console.error('Paid cart not deleted', cartId, e && e.message));
+  }
   return Response.json({
     ok: true,
     paymentId: p.id,
@@ -489,5 +553,5 @@ export default async (req) => {
 };
 
 export const config = {
-  path: ['/api/checkout', '/api/checkout/config', '/api/checkout/code'],
+  path: ['/api/checkout', '/api/checkout/config', '/api/checkout/code', '/api/checkout/cart'],
 };
