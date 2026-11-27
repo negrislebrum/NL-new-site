@@ -24,6 +24,8 @@
 //
 // PROMO CODES live in CODES below. Each use is recorded in Netlify Database (coupon_redemptions)
 // so per-customer and total limits hold across every order.
+// KNIT75 (private Black Friday knit code) keeps its per-piece / per-size counts in Netlify Blobs
+// (store "knit75-redemptions") instead — see knitLimit() below.
 
 import { getDatabase } from '@netlify/database';
 import { getStore } from '@netlify/blobs';
@@ -106,7 +108,10 @@ const CATALOG = {
 const VAULT = ['oscar-gold-jumpsuit', 'elephant-ear-suit', 'biker-set', 'sarahs-dress', 'pearl-satin-set', 'cowl-neck-dress', 'curtain-dress',
   'audrey', 'funkadelic', 'n-sweater-vest', 'apron-dress', 'fingerprint-dress', 'polka-dot-romper-set'];
 
-// off: cents taken off the item, or pct: percent off the sale price, rounded down to end in 5 or 0.
+// The knit pieces KNIT75 applies to.
+const KNIT = ['logo-sweater', 'negris-originals', 'n-varsity-knit', 'no-war-knit', 'classic-vest'];
+
+// off: cents taken off the item, price: { id: cents } the item is sold for under the code, or pct: percent off the sale price, rounded down to end in 5 or 0.
 // One code per order, so codes never combine. expires (optional): the code stops working at this moment.
 // limit (optional): total uses; once reached, the listed pieces are sold out. perCustomer: uses per email address.
 // Codes with a limit or perCustomer are recorded in coupon_redemptions; codes without them are not.
@@ -121,10 +126,21 @@ const CODES = {
     items: VAULT, pct: 25,
     expires: Date.parse('2026-12-01T06:00:00Z'), // 11:59 PM CST Nov 30 is the last valid minute
   },
+  // Black Friday, private (never shown on the site): knit pieces at a set price.
+  // blobLimit: uses per piece, or per size ({ M: 5, L: 2 }); counted in Netlify Blobs. When a piece or
+  // size is used up, only the code stops working for it — the piece can still be bought at full price.
+  KNIT75: {
+    items: KNIT,
+    price: { 'logo-sweater': 7500, 'negris-originals': 7500, 'n-varsity-knit': 7500, 'no-war-knit': 7500, 'classic-vest': 4500 },
+    blobLimit: { 'logo-sweater': 10, 'negris-originals': 10, 'n-varsity-knit': 10, 'no-war-knit': 10, 'classic-vest': { M: 5, L: 2 } },
+    soldOut: 'This offer has sold out for this item.',
+    expires: Date.parse('2026-12-01T06:00:00Z'), // 11:59 PM CST Nov 30 is the last valid minute
+  },
 };
 
 // Cents a code takes off an item: a fixed amount, or a percent with the new price rounded down to end in 5 or 0.
-function discountFor(c, item) {
+function discountFor(c, item, id) {
+  if (c.price) return Object.prototype.hasOwnProperty.call(c.price, id) ? Math.max(0, item.amount - c.price[id]) : 0;
   if (c.pct) return item.amount - Math.floor((item.amount * (100 - c.pct)) / 100 / 500) * 500;
   return c.off || 0;
 }
@@ -194,6 +210,81 @@ async function holdCode(code, c, email, key, itemId) {
   } finally {
     client.release();
   }
+}
+
+// ---------- KNIT75 redemption counts (Netlify Blobs) ----------
+// One blob per counted bucket (a piece, or a piece + size): { uses: { [idempotencyKey]: { status, at, paymentId } } }.
+// A use counts while it's paid or a fresh hold (HOLD_MINUTES). Writes are conditional on the blob's ETag,
+// so two checkouts can never both take the last use.
+const knitStore = () => getStore({ name: 'knit75-redemptions', consistency: 'strong' });
+
+// The bucket and limit for this piece and size, or null if the code has no blob limit.
+function knitLimit(c, id, size) {
+  const l = c.blobLimit && c.blobLimit[id];
+  if (l == null) return null;
+  if (typeof l === 'number') return { key: id, limit: l };
+  return { key: id + '__' + size, limit: Object.prototype.hasOwnProperty.call(l, size) ? l[size] : 0 };
+}
+const liveUse = (u) => u.status === 'paid' || Date.now() - u.at < HOLD_MINUTES * 60000;
+const liveCount = (data) => Object.values((data && data.uses) || {}).filter(liveUse).length;
+
+async function knitCount(key) {
+  const data = await knitStore().get(key, { type: 'json' });
+  return liveCount(data);
+}
+
+// Is the code still available for this piece (and size)? Without a size, a per-size piece is
+// available while any of its sizes is.
+async function knitAvailable(c, id, size) {
+  const l = c.blobLimit && c.blobLimit[id];
+  if (l == null) return true;
+  if (typeof l === 'object' && !Object.prototype.hasOwnProperty.call(l, size)) {
+    for (const s of Object.keys(l)) if ((await knitCount(id + '__' + s)) < l[s]) return true;
+    return false;
+  }
+  const b = knitLimit(c, id, size);
+  return (await knitCount(b.key)) < b.limit;
+}
+
+// Read-modify-write on one bucket, retried when another checkout wrote it first.
+// change(data) edits data in place and returns { result, write }.
+async function knitUpdate(key, change) {
+  const store = knitStore();
+  for (let i = 0; i < 10; i++) {
+    const cur = await store.getWithMetadata(key, { type: 'json' });
+    const data = cur && cur.data && typeof cur.data === 'object' ? cur.data : { uses: {} };
+    data.uses = data.uses || {};
+    const { result, write } = change(data);
+    if (!write) return result;
+    const w = await store.setJSON(key, data, cur ? { onlyIfMatch: cur.etag } : { onlyIfNew: true });
+    if (w.modified) return result;
+    await new Promise((r) => setTimeout(r, 40 + Math.random() * 120));
+  }
+  throw new Error('KNIT75 count busy');
+}
+
+// Holds one use for this checkout attempt; a retry with the same key reuses its hold.
+function holdKnit(b, key) {
+  return knitUpdate(b.key, (data) => {
+    for (const [k, u] of Object.entries(data.uses)) if (!liveUse(u)) delete data.uses[k];
+    if (data.uses[key]) return { result: { ok: true }, write: false };
+    if (liveCount(data) >= b.limit) return { result: { soldOut: true }, write: false };
+    data.uses[key] = { status: 'pending', at: Date.now() };
+    return { result: { ok: true }, write: true };
+  });
+}
+function releaseKnit(b, key) {
+  return knitUpdate(b.key, (data) => {
+    if (!data.uses[key] || data.uses[key].status === 'paid') return { write: false };
+    delete data.uses[key];
+    return { write: true };
+  }).catch((e) => console.error('KNIT75 release failed', e && e.message));
+}
+function paidKnit(b, key, paymentId) {
+  return knitUpdate(b.key, (data) => {
+    data.uses[key] = { status: 'paid', at: Date.now(), paymentId };
+    return { write: true };
+  }).catch((e) => console.error('KNIT75 use not recorded', paymentId, e && e.message));
 }
 
 // Sizes with no stock left, per piece: { id: ['M'] }. Counts are never sent to the page.
@@ -320,7 +411,7 @@ async function saveCart(body) {
   const color = (item.colors || []).includes(str(body.color, 40)) ? str(body.color, 40) : '';
   const promo = str(body.code, 30) ? checkCode(id, body.code) : null;
   const code = promo && !promo.error ? promo.code : '';
-  const price = item.amount - (code ? discountFor(promo.c, item) : 0);
+  const price = item.amount - (code ? discountFor(promo.c, item, id) : 0);
   const image = /^[a-z0-9-]{1,60}$/.test(str(body.image, 60)) ? str(body.image, 60) : '';
   const items = [{ id, name: item.name, size, color, price, image }];
   const store = carts();
@@ -425,9 +516,17 @@ export default async (req) => {
   if (promo && promo.error) return Response.json({ ok: false, error: promo.error }, { status: 400 });
 
   if (url.pathname.endsWith('/code')) {
+    if (promo && promo.c.blobLimit) {
+      let open;
+      try { open = await knitAvailable(promo.c, id, str(body.size, 20)); } catch (e) {
+        console.error('KNIT75 count check failed', e && e.message);
+        return Response.json({ ok: false, error: 'We couldn’t check that code. Please try again.' }, { status: 503 });
+      }
+      if (!open) return Response.json({ ok: false, error: promo.c.soldOut }, { status: 409 });
+    }
     return Response.json({
-      ok: true, code: promo ? promo.code : '', discount: promo ? discountFor(promo.c, item) : 0,
-      amount: item.amount - (promo ? discountFor(promo.c, item) : 0), freeShipping: !!(promo && promo.c.freeShipping),
+      ok: true, code: promo ? promo.code : '', discount: promo ? discountFor(promo.c, item, id) : 0,
+      amount: item.amount - (promo ? discountFor(promo.c, item, id) : 0), freeShipping: !!(promo && promo.c.freeShipping),
     });
   }
   const size = str(body.size, 20);
@@ -470,6 +569,7 @@ export default async (req) => {
     last_name: buyer.familyName,
   };
   // Hold one use of the code for this customer before charging; it's released if the payment fails.
+  const releaseCodeDb = () => hold ? db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {}) : null;
   let hold = null;
   if (promo && tracked(promo.c)) {
     try { hold = await holdCode(promo.code, promo.c, buyer.email.toLowerCase(), idempotencyKey, id); } catch (e) {
@@ -478,7 +578,19 @@ export default async (req) => {
     }
     if (hold.error) return Response.json({ ok: false, soldOut: !!hold.soldOut, error: hold.error }, { status: 409 });
   }
-  const releaseCode = () => hold ? db().sql`DELETE FROM coupon_redemptions WHERE id = ${hold.id} AND status = 'pending'`.catch(() => {}) : null;
+  // KNIT75: one use of this piece's (or size's) count is held in Netlify Blobs before charging.
+  // Only the code is sold out when the count is used up, so the piece itself stays available.
+  const knit = promo ? knitLimit(promo.c, id, size) : null;
+  if (knit) {
+    let kh;
+    try { kh = await holdKnit(knit, idempotencyKey); } catch (e) {
+      console.error('KNIT75 hold failed', e && e.message);
+      await releaseCodeDb();
+      return Response.json({ ok: false, error: 'Checkout isn’t available right now. Please try again shortly.' }, { status: 503 });
+    }
+    if (!kh.ok) { await releaseCodeDb(); return Response.json({ ok: false, error: promo.c.soldOut }, { status: 409 }); }
+  }
+  const releaseCode = async () => { await releaseCodeDb(); if (knit) await releaseKnit(knit, idempotencyKey); };
   // Limited pieces: one unit of the size is held before charging and put back if the payment fails.
   if (item.stock) {
     let st;
@@ -493,7 +605,7 @@ export default async (req) => {
       return Response.json({ ok: false, error: st.error }, { status: 409 });
     }
   }
-  const discount = promo ? discountFor(promo.c, item) : 0;
+  const discount = promo ? discountFor(promo.c, item, id) : 0;
   const amount = item.amount - discount;
 
   const note = [item.name, 'Size: ' + size, color ? 'Color: ' + color : '',
@@ -528,6 +640,7 @@ export default async (req) => {
     await db().sql`UPDATE coupon_redemptions SET status = 'paid', payment_id = ${p.id} WHERE id = ${hold.id}`
       .catch((e) => console.error('Code use not recorded', p.id, e && e.message));
   }
+  if (knit) await paidKnit(knit, idempotencyKey, p.id);
   if (item.stock) {
     await db().sql`UPDATE inventory_holds SET status = 'paid', payment_id = ${p.id} WHERE idempotency_key = ${idempotencyKey}`
       .catch((e) => console.error('Stock sale not recorded', p.id, e && e.message));

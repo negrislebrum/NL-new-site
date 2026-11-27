@@ -1288,7 +1288,7 @@
       const code=$('coCode').value.trim().toUpperCase(), m=$('coCodeMsg'), o=order;
       m.className='co-code-msg'; m.textContent=code?'Checking…':'';
       let d={};
-      try{ const res=await fetch('/api/checkout/code',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ id:o.id, code }) }); d=await res.json().catch(()=>({})); }
+      try{ const res=await fetch('/api/checkout/code',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ id:o.id, size:o.size, code }) }); d=await res.json().catch(()=>({})); }
       catch(e){ d={ error:'We couldn’t check that code. Please try again.' }; }
       if(order!==o) return;
       if(d.soldOut&&d.error){ SOLD[o.id]=d.error; renderLists(); }
@@ -1326,7 +1326,7 @@
       $('coShip').textContent=p.ship||''; $('coShip').hidden=!p.ship;
       // US-only pieces lock the shipping country to the United States.
       $('coCountry').disabled=!!it.usOnly; if(it.usOnly) $('coCountry').value='US';
-      $('coCodeWrap').hidden=!(p.code||p.cat==='vault'); $('coCode').value=''; $('coCodeMsg').textContent=''; $('coDisc').hidden=true;
+      $('coCodeWrap').hidden=!(p.code||p.cat==='vault'||p.cat==='knit'); $('coCode').value=''; $('coCodeMsg').textContent=''; $('coDisc').hidden=true;
       pay.textContent='Pay '+money(it.amount); pay.disabled=false;
       $('coBody').style.display=''; $('coDone').classList.remove('show'); err('');
       co.classList.add('open'); co.scrollTop=0;
