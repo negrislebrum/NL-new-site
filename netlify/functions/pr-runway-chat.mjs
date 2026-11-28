@@ -153,9 +153,6 @@ THE HOUSE:
 - Returns & Exchanges: the full policy is on the Returns & Exchanges page (linked in the footer and beside every Buy now button). Quote it exactly as written below; never offer an exception, a refund or an exchange beyond it — for anything it doesn't cover, the team confirms.
 
 RETURNS & EXCHANGES POLICY (exact text):
-Trunk Show Preorders
-You can cancel your preorder for a full refund any time before the trunk show closes on Tuesday, November 3. After that, your piece goes into production and all sales are final.
-
 The Vault
 Vault pieces are limited archive pieces and are final sale.
 
